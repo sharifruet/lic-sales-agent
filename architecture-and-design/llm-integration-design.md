@@ -128,6 +128,9 @@ Design supports switching providers through abstraction layer (see Technical Des
 
 ## System Prompts
 
+> **LangGraph Update**  
+> The production prompt inventory now lives under `chains/prompts/` and is consumed through the planner/retriever/action runnables. The legacy stage-based prompts documented below remain for historical reference and may be phased out as the LangGraph pipeline matures.
+
 ### 3.1 Base System Prompt
 
 ```python
@@ -1465,11 +1468,11 @@ response = await llm.generate(
 
 ### A.1 Prompt Templates Library
 
-All prompt templates should be stored in version-controlled files:
-- `prompts/system_prompts.py`
-- `prompts/conversation_templates.py`
-- `prompts/objection_responses.py`
-- `prompts/closing_templates.py`
+Prompt templates are version-controlled in the `chains/prompts/` directory:
+- `chains/prompts/planner.prompt`
+- `chains/prompts/retriever.prompt`
+- `chains/prompts/action.prompt`
+- Legacy templates (e.g., `prompts/closing_templates.py`) are retained for reference during migration.
 
 ### A.2 LLM Provider Configuration
 

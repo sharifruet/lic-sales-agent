@@ -95,7 +95,7 @@ alembic upgrade head
 
 ```bash
 # Run the FastAPI application
-uvicorn src.main:app --reload --port 8000
+uvicorn apps.api.main:app --reload --port 8000
 ```
 
 Application will be available at: http://localhost:8000

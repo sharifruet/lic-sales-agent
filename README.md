@@ -75,20 +75,38 @@ docker exec -it lic-agent-ollama ollama pull llama3.1
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+# Optional helper (installs deps + pre-commit hooks)
+make dev  # Windows PowerShell: python -m pip install -r requirements.txt; pre-commit install
 
 # 5. Configure environment
 cp .env.docker.example .env
 # Edit .env and add encryption keys (see docs/development-environment-setup.md)
 
 # 6. Run database migrations
-cd app
 alembic upgrade head
 
 # 7. Start application
-cd app
-uvicorn src.main:app --reload --port 8000
-# Or from root directory:
-# PYTHONPATH=app uvicorn app.src.main:app --reload --port 8000
+uvicorn apps.api.main:app --reload --port 8000
+# Or use the Makefile helper:
+# make run
+
+# Run project checks
+make format lint type-check test
+# Windows helper script:
+pwsh ./scripts/run_checks.ps1
+
+### LangGraph Setup (Preview)
+
+The new agent architecture is being migrated to [LangGraph](https://langchain-ai.github.io/langgraph/).
+To experiment locally:
+
+```bash
+pip install langgraph langchain
+python scripts/bootstrap.sh  # placeholder for future graph seeding
+```
+
+The FastAPI app currently re-exports the legacy implementation while the new graph
+and state management layers are scaffolded under `apps/`, `graph/`, and `chains/`.
 ```
 
 **Application will be available at:**
@@ -105,42 +123,40 @@ See [Development Environment Setup Guide](./docs/development-environment-setup.m
 
 ```
 lic-agent/
-├── README.md                      # This file
-├── docker-compose.yml            # Docker Compose configuration
-├── requirements.txt              # Python dependencies
-├── .env.docker.example           # Environment template for Docker
+├── README.md
+├── docker-compose.yml
+├── requirements.txt
+├── .env.docker.example
 │
-├── requirements/                 # Requirements Documentation
-│   ├── requirements.md           # Business Requirements Document
-│   └── user-stories/             # User Stories & Acceptance Criteria
-│       ├── README.md             # User Stories Index
-│       └── us-*.md               # Individual user stories (22 stories)
+├── apps/
+│   ├── api/                      # FastAPI entrypoint (new LangGraph layout)
+│   └── web/                      # Optional web frontend placeholder
 │
-├── architecture-and-design/      # Architecture & Design Documents
-│   ├── system-architecture.md   # High-level system architecture
-│   ├── technical-design.md       # Detailed technical design & implementation
-│   └── llm-integration-design.md # LLM integration & prompt engineering
+├── graph/
+│   ├── nodes/                    # LangGraph node implementations
+│   └── build_graph.py            # Graph assembly
 │
+├── chains/                       # LangChain prompts/runnables
+│   ├── prompts/
+│   ├── runnables.py
+│   └── parsers.py
+│
+├── rag/                          # Retrieval augmented generation utilities
+├── tools/                        # MCP clients and tool specs
+├── state/                        # Agent state & memory schemas
+├── observability/                # LangSmith/tracing/evals
+│
+├── config/                       # Shared configuration, database, cache
+│
+├── alembic/                      # Alembic migration scripts
+├── alembic.ini
+│
+├── tests/                        # New LangGraph-focused tests
 ├── docs/                         # Development Documentation
-│   ├── development-environment-setup.md  # Local environment setup
-│   └── docker-setup.md          # Docker-specific setup guide
-│
-├── app/                          # Application code
-│   ├── src/                      # Source code
-│   │   ├── api/                  # API routes
-│   │   ├── services/             # Business logic
-│   │   ├── models/               # Data models
-│   │   ├── repositories/         # Data access layer
-│   │   ├── llm/                  # LLM integration
-│   │   └── utils/                # Utilities
-│   ├── tests/                    # Test files
-│   ├── alembic/                  # Database migrations
-│   ├── alembic.ini               # Alembic configuration
-│   └── scripts/                  # Utility scripts
-│
-├── data/                         # Application data (created at runtime)
-│   ├── leads/                    # Lead data files
-│   └── conversations/            # Conversation logs
+├── requirements/                 # Business requirements & user stories
+├── architecture-and-design/      # Architecture & design documents
+├── scripts/                      # Utility scripts
+└── data/                         # Runtime data (created locally)
 ```
 
 ---
@@ -193,23 +209,29 @@ lic-agent/
    python3 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
+   
+   # Optional helper targets (run from repo root)
+   make dev          # installs deps + sets up pre-commit
+   make install      # installs only the dependencies
    ```
 
 2. **Run Application**
    ```bash
-   cd app
-   uvicorn src.main:app --reload --port 8000
+   make run
+   # or manually:
+   uvicorn apps.api.main:app --reload --port 8000
    ```
 
 3. **Run Tests**
    ```bash
-   cd app
-   pytest
+   make test
+   # or manually: pytest tests
+   # Windows helper script:
+   pwsh ./scripts/run_checks.ps1 -Test
    ```
 
 4. **Database Migrations**
    ```bash
-   cd app
    # Create migration
    alembic revision --autogenerate -m "Description"
    
