@@ -3330,38 +3330,43 @@ def sample_policy():
 ### A.1 Code Organization
 
 ```
-src/
-├── api/
-│   ├── routes/
+app/
+├── src/
+│   ├── api/
+│   │   ├── routes/
+│   │   │   ├── conversation.py
+│   │   │   ├── leads.py
+│   │   │   └── policies.py
+│   │   └── middleware/
+│   │       ├── auth.py
+│   │       └── error_handler.py
+│   ├── services/
+│   │   ├── conversation_service.py
+│   │   ├── lead_service.py
+│   │   ├── policy_service.py
+│   │   └── validation_service.py
+│   ├── llm/
+│   │   ├── providers/
+│   │   │   ├── base.py
+│   │   │   ├── openai.py
+│   │   │   └── anthropic.py
+│   │   ├── context_manager.py
+│   │   └── prompt_manager.py
+│   ├── models/
+│   │   ├── lead.py
 │   │   ├── conversation.py
-│   │   ├── leads.py
-│   │   └── policies.py
-│   └── middleware/
-│       ├── auth.py
-│       └── error_handler.py
-├── services/
-│   ├── conversation_service.py
-│   ├── lead_service.py
-│   ├── policy_service.py
-│   └── validation_service.py
-├── llm/
-│   ├── providers/
-│   │   ├── base.py
-│   │   ├── openai.py
-│   │   └── anthropic.py
-│   ├── context_manager.py
-│   └── prompt_manager.py
-├── models/
-│   ├── lead.py
-│   ├── conversation.py
-│   └── policy.py
-├── repositories/
-│   ├── lead_repository.py
-│   ├── conversation_repository.py
-│   └── policy_repository.py
-└── utils/
-    ├── encryption.py
-    └── validators.py
+│   │   └── policy.py
+│   ├── repositories/
+│   │   ├── lead_repository.py
+│   │   ├── conversation_repository.py
+│   │   └── policy_repository.py
+│   └── utils/
+│       ├── encryption.py
+│       └── validators.py
+├── tests/
+├── alembic/
+├── alembic.ini
+└── scripts/
 ```
 
 ### A.2 Testing Strategy

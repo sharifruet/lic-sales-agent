@@ -16,6 +16,11 @@ sys.path.insert(0, str(app_root))
 
 from src.config import settings
 from src.database import Base
+# Import models so that Base.metadata is populated for autogenerate
+from src.models import lead as _lead_model  # noqa: F401
+from src.models import conversation as _conversation_model  # noqa: F401
+from src.models import message as _message_model  # noqa: F401
+from src.models import policy as _policy_model  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

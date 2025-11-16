@@ -435,6 +435,30 @@ Infrastructure:
 └── Nginx (reverse proxy, optional)
 ```
 
+### 6.3 Codebase Layout
+
+```
+lic-agent/
+├── app/                      # Application code
+│   ├── src/                  # FastAPI source code
+│   ├── tests/                # Tests
+│   ├── alembic/              # Database migrations
+│   ├── alembic.ini           # Alembic configuration
+│   └── scripts/              # Code-related scripts
+├── requirements.txt          # Project dependencies (root)
+├── docker-compose.yml        # Docker services
+├── .env.docker.example       # Environment template
+├── docs/                     # Developer documentation
+└── architecture-and-design/  # Architecture documents
+```
+
+Notes:
+- Run app from `app/`:
+  - Start: `cd app && uvicorn src.main:app --reload --port 8000`
+  - Migrations: `cd app && alembic upgrade head`
+- From root using PYTHONPATH:
+  - `PYTHONPATH=app uvicorn app.src.main:app --reload --port 8000`
+
 ---
 
 ## System Boundaries and Interfaces

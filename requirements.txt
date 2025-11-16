@@ -38,3 +38,4 @@ pytest-asyncio>=0.21.1
 # flake8>=6.1.0
 # mypy>=1.7.0
 
+greenlet>=3.0.3
