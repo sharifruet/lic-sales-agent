@@ -104,12 +104,62 @@ So that **conversations can be reviewed, analyzed, and linked to leads**
 
 ## Technical Notes
 
-- Conversation and Message database schema
-- Message storage strategy (real-time vs batch)
-- Conversation summary generation (LLM-based or rule-based)
-- Metadata extraction and storage
-- Indexing for performance (conversation_id, lead_id, timestamps)
-- Storage optimization for large conversations
+- Conversation and Message models in PostgreSQL
+- Real-time message storage via `ConversationService`
+- Conversation summary generation via LLM (`generate_summary()`)
+- Metadata stored in `Conversation` model (stage, message_count)
+- Session state in Redis, messages in PostgreSQL
+- Indexing for performance (conversation_id, session_id, timestamps)
+
+## API Implementation
+
+**Endpoint**: `GET /api/conversation/{session_id}`
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "conversation_id": "def456...",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello",
+      "timestamp": "2024-01-15T10:00:00Z"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! I'm Alex...",
+      "timestamp": "2024-01-15T10:00:01Z"
+    }
+  ],
+  "customer_profile": {
+    "age": 35,
+    "name": "John",
+    "purpose": "family protection"
+  },
+  "conversation_stage": "information"
+}
+```
+
+**Endpoint**: `POST /api/conversation/end`
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "conversation_id": "def456...",
+  "status": "ended",
+  "summary": "Customer was interested in term life insurance...",
+  "duration_seconds": 420
+}
+```
+
+**Implementation Details**:
+- Messages stored in real-time via `ConversationService.process_message()`
+- Conversation record created at start
+- Summary generated via LLM at end
+- All messages linked to conversation
+- Metadata tracked (stage, message_count, duration)
 
 ## Related Requirements
 - **FR-7.3**: Store conversation transcripts/logs
@@ -125,15 +175,27 @@ So that **conversations can be reviewed, analyzed, and linked to leads**
 ## Priority
 **High** - Important for analytics, quality assurance, and customer service
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoints**: 
+  - `POST /api/conversation/start` - Creates conversation record
+  - `POST /api/conversation/message` - Stores messages
+  - `POST /api/conversation/end` - Generates summary
+  - `GET /api/conversation/{session_id}` - Retrieves transcript
+- **Implementation Notes**: 
+  - Real-time message storage
+  - Conversation summary via LLM
+  - Metadata tracking
+  - Full transcript retrieval
+  - Session state management
+
 ---
 
 ## Implementation Considerations
 
-- Design conversation and message database schema
-- Implement real-time message storage (async if possible to not block responses)
-- Create conversation summary generation (using LLM or template-based)
-- Design indexing strategy for fast retrieval
-- Consider compression for long conversations
-- Implement retention policy (90 days minimum per requirements)
-- Design export functionality for compliance/archival
-
+- ✅ Conversation and message database schema (`Conversation`, `Message` models)
+- ✅ Real-time message storage (async, non-blocking)
+- ✅ Conversation summary generation (LLM-based)
+- ✅ Indexing strategy for fast retrieval
+- ✅ Metadata tracking (stage, count, duration)
+- ✅ Retention policy (database-level)

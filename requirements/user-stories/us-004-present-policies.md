@@ -88,12 +88,45 @@ So that **I can understand my options and make an informed decision**
 
 ## Technical Notes
 
-- Policy database schema and query logic
-- Relevance scoring algorithm based on customer profile
-- Policy information template/formatter
-- Dynamic example generation based on customer data
-- Policy eligibility checking based on customer age and other factors
-- Caching policy data for performance
+- Policy database via `PolicyService` and `PolicyRepository`
+- Policy matching based on customer profile (age, purpose, dependents)
+- Policy information formatted via `PromptManager` and `ContextManager`
+- Dynamic example generation based on customer data via LLM
+- Policy eligibility checking based on customer age
+- Policies included in LLM context for natural presentation
+
+## API Implementation
+
+**Endpoint**: `GET /api/policies/` (public)
+**Endpoint**: `GET /api/policies/{policy_id}` (public)
+
+**Response**:
+```json
+[
+  {
+    "id": 1,
+    "name": "Term Life 20-Year",
+    "provider": "Life Insurance Company",
+    "coverage_amount": 500000,
+    "monthly_premium": 50.00,
+    "term_years": 20,
+    "medical_exam_required": false
+  }
+]
+```
+
+**Conversation Integration**:
+- Policies retrieved via `PolicyService.list_policies()`
+- Top 5 policies included in LLM context
+- Policies formatted in system prompts
+- LLM presents policies naturally based on customer profile
+
+**Implementation Details**:
+- Policy CRUD operations via `PolicyService`
+- Policy data stored in PostgreSQL
+- Policies included in conversation context
+- LLM generates natural policy presentations
+- Relevance determined by customer profile matching
 
 ## Related Requirements
 - **FR-2.1.1**: Comprehensive policy database
@@ -115,14 +148,26 @@ So that **I can understand my options and make an informed decision**
 ## Priority
 **High** - Core functionality for sales process
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoints**: 
+  - `GET /api/policies/` - List all policies
+  - `GET /api/policies/{id}` - Get policy details
+  - `POST /api/policies/` - Create policy (admin)
+- **Implementation Notes**: 
+  - Policy service and repository implemented
+  - Policy CRUD operations
+  - Policies included in conversation context
+  - LLM-based natural policy presentation
+  - Relevance-based selection via customer profile
+
 ---
 
 ## Implementation Considerations
 
-- Design policy database schema (name, type, features, coverage range, premiums, eligibility)
-- Implement policy matching/recommendation algorithm
-- Create policy presentation templates
-- Define policy eligibility rules engine
-- Consider policy information caching for performance
-- Support dynamic example generation based on customer profile
-
+- ✅ Policy database schema designed and implemented (`Policy` model)
+- ✅ Policy matching/recommendation via customer profile
+- ✅ Policy presentation via LLM with context
+- ✅ Policy eligibility checking (age-based)
+- ✅ Dynamic example generation via LLM
+- ✅ Policy information caching (can be added for performance)

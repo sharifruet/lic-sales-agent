@@ -92,13 +92,63 @@ So that **I can register them as leads for the sales team to follow up**
 
 ## Technical Notes
 
-- Information collection state machine
-- Field-by-field collection logic
-- Real-time validation for each field
-- Format validation (phone, email, NID patterns)
-- Data extraction from natural language responses
-- Confirmation workflow
-- Partial save capability (optional)
+- Information collection via `INFORMATION_COLLECTION` conversation stage
+- Entity extraction using `InformationExtractionService` (LLM-based with regex fallback)
+- Data stored in `SessionState.collected_data` and `SessionState.customer_profile`
+- Validation via `ValidationService` for phone, email, NID
+- Encryption via `EncryptionService` for sensitive data (phone, NID)
+- Lead creation via `LeadService` when collection complete
+
+## API Implementation
+
+**Endpoint**: `POST /api/conversation/message`
+
+**Request**:
+```json
+{
+  "session_id": "abc123...",
+  "message": "My name is John Doe and my phone is +1234567890"
+}
+```
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "response": "Great! I have your name and phone. Now I'll need your address...",
+  "interest_detected": "high",
+  "conversation_stage": "information_collection",
+  "metadata": {
+    "message_count": 10,
+    "extracted_data": {
+      "name": "John Doe",
+      "phone": "+1234567890"
+    }
+  }
+}
+```
+
+**Lead Creation Endpoint**: `POST /api/leads/`
+
+**Request**:
+```json
+{
+  "name": "John Doe",
+  "phone": "+1234567890",
+  "nid": "123456789",
+  "address": "123 Main St, City, Country",
+  "interested_policy": "Term Life 20-Year",
+  "email": "john@example.com"
+}
+```
+
+**Implementation Details**:
+- Information extraction from natural language
+- Validation of phone, email, NID formats
+- Encryption of sensitive data before storage
+- Sequential collection guided by LLM
+- Data stored in session state
+- Lead creation when collection complete
 
 ## Related Requirements
 - **FR-6.1**: Mandatory information list
@@ -120,15 +170,27 @@ So that **I can register them as leads for the sales team to follow up**
 ## Priority
 **High** - Core functionality for lead generation
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoints**: 
+  - `POST /api/conversation/message` (information collection)
+  - `POST /api/leads/` (lead creation)
+- **Implementation Notes**: 
+  - Information collection stage fully implemented
+  - Entity extraction via LLM and regex
+  - Validation service for all fields
+  - Encryption service for sensitive data
+  - Sequential collection with LLM guidance
+  - Lead service for final storage
+
 ---
 
 ## Implementation Considerations
 
-- Design information collection workflow/state machine
-- Implement field-by-field validation
-- Create natural language extraction for structured data (address, phone, etc.)
-- Define validation patterns for each field type
-- Consider partial save if customer needs to return later
-- Design confirmation UI/format
-- Handle interruptions gracefully (customer changes mind)
-
+- ✅ Information collection workflow/state machine implemented
+- ✅ Field-by-field validation via `ValidationService`
+- ✅ Natural language extraction for structured data (`InformationExtractionService`)
+- ✅ Validation patterns for each field type
+- ✅ Encryption for sensitive data (`EncryptionService`)
+- ✅ Lead creation with validation and encryption
+- ✅ Error handling for invalid data

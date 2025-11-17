@@ -32,13 +32,14 @@ So that **I can transition to information collection and close the sale**
 - Given various customer responses
 - When evaluating interest
 - Then the system distinguishes between:
-  - Informational seekers (just gathering information)
-  - Interested prospects (seriously considering)
-  - Ready to buy (wants to proceed immediately)
+  - NONE: No interest detected
+  - LOW: Some interest, gathering information
+  - MEDIUM: Interested, considering options
+  - HIGH: Ready to proceed, strong buying intent
 - And system adapts approach based on interest level
 
 ### AC-009.4: Transition to Data Collection
-- Given buying interest is detected
+- Given buying interest is detected (MEDIUM or HIGH)
 - When system responds
 - Then the system transitions smoothly from information-sharing to data collection
 - And the system confirms readiness before starting data collection
@@ -80,12 +81,46 @@ So that **I can transition to information collection and close the sale**
 
 ## Technical Notes
 
-- Sentiment analysis integration
-- Intent classification model (informational vs buying intent)
-- Keyword/phrase pattern matching for buying signals
-- Conversation flow state machine
-- Interest scoring algorithm
-- Transition logic between conversation stages
+- Interest detection via `detect_interest()` method in `ConversationService`
+- Scoring algorithm based on conversation state and collected data
+- Interest levels: NONE, LOW, MEDIUM, HIGH
+- Integration with conversation stage management
+- Automatic transition to INFORMATION_COLLECTION stage when interest is HIGH or MEDIUM
+
+## API Implementation
+
+**Endpoint**: `POST /api/conversation/message`
+
+**Request**:
+```json
+{
+  "session_id": "abc123...",
+  "message": "I'm interested in that policy"
+}
+```
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "response": "Great! I'd be happy to help you get started...",
+  "interest_detected": "high",
+  "conversation_stage": "information_collection",
+  "metadata": {
+    "message_count": 8,
+    "extracted_data": {}
+  }
+}
+```
+
+**Implementation Details**:
+- Interest detection via `detect_interest()` method
+- Scoring based on:
+  - Policy selection (score +5)
+  - Information collection started (score +3)
+  - Conversation stage (score +2 to +5)
+- Automatic stage transition when interest is HIGH or MEDIUM
+- Interest level included in response metadata
 
 ## Related Requirements
 - **FR-5.1**: Identify positive signals
@@ -104,15 +139,22 @@ So that **I can transition to information collection and close the sale**
 ## Priority
 **High** - Critical for conversion and sales process
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoint**: `POST /api/conversation/message` (with interest detection)
+- **Implementation Notes**: 
+  - Interest detection algorithm implemented
+  - Four-level interest classification (NONE, LOW, MEDIUM, HIGH)
+  - Automatic stage transition based on interest
+  - Interest level included in API response
+  - Scoring based on conversation state and collected data
+
 ---
 
 ## Implementation Considerations
 
-- Implement sentiment analysis (using pre-trained models or LLM-based analysis)
-- Define buying signal patterns/keywords
-- Create intent classification system
-- Develop interest scoring mechanism
-- Design transition logic between conversation stages
-- Balance between being proactive and respecting customer pace
-- Handle false positives gracefully
-
+- ✅ Interest detection using conversation state analysis
+- ✅ Scoring mechanism based on multiple factors
+- ✅ Automatic transition logic between conversation stages
+- ✅ Balance between being proactive and respecting customer pace
+- ✅ False positive handling with graceful fallback

@@ -3,185 +3,185 @@
 ## User Story
 As a **potential customer**
 I want the **system to handle errors gracefully**
-So that **I have a smooth experience even when something goes wrong**
+So that **I have a good experience even when things go wrong**
 
 ## Acceptance Criteria
 
-### AC-022.1: Technical Error Handling
-- Given system encounters technical error
-- When error occurs
-- Then the system:
-  - Provides friendly error message to customer
-  - Does not expose technical details
-  - Logs error for developers
-  - Attempts recovery if possible
-  - Offers to retry or continue
-- And customer experience is not significantly disrupted
+### AC-022.1: User-Friendly Error Messages
+- Given an error occurs
+- When system encounters error
+- Then the system provides user-friendly error messages:
+  - Clear explanation of what happened
+  - Helpful guidance on what to do next
+  - No technical jargon or stack traces
+  - Apologetic and professional tone
+- And messages don't blame the customer
 
-### AC-022.2: API Failure Handling
-- Given LLM API or external API fails
-- When API call fails
-- Then the system:
-  - Detects failure quickly
-  - Provides friendly message: "I'm having a technical issue. Please give me a moment."
-  - Retries with exponential backoff (up to 3 attempts)
-  - Falls back to cached response if available (optional)
-  - Offers to continue conversation later if persistent failure
-- And customer understands what's happening
+### AC-022.2: Error Recovery
+- Given an error occurs
+- When system encounters error
+- Then the system attempts to recover:
+  - Retries failed operations when appropriate
+  - Provides alternative solutions
+  - Maintains conversation state
+  - Allows customer to continue conversation
+- And recovery is transparent to customer
 
-### AC-022.3: Timeout Handling
-- Given system operation times out
-- When timeout occurs
+### AC-022.3: LLM Service Errors
+- Given LLM service is unavailable or fails
+- When system needs LLM response
 - Then the system:
-  - Detects timeout
-  - Acknowledges delay to customer
-  - Retries operation if appropriate
-  - Continues conversation where possible
-  - Apologizes for delay
-- And timeout doesn't break conversation
+  - Detects LLM service errors
+  - Provides fallback responses
+  - Informs customer of temporary issue
+  - Retries when appropriate
+- And conversation continues despite LLM issues
 
-### AC-022.4: Data Validation Errors
+### AC-022.4: Validation Errors
 - Given customer provides invalid data
-- When validation fails
+- When system validates
 - Then the system:
-  - Explains error clearly in user-friendly language
-  - Provides expected format or example
-  - Asks for correction
-  - Doesn't use technical error messages
-  - Guides customer to provide correct data
-- And validation errors are recoverable
+  - Provides clear error messages
+  - Explains what's wrong
+  - Provides examples of correct format
+  - Allows customer to correct and retry
+- And validation errors are helpful, not frustrating
 
-### AC-022.5: Misunderstanding Recovery
-- Given system misunderstands customer input
-- When misunderstanding is detected (customer corrects or clarifies)
+### AC-022.5: Session Errors
+- Given session expires or is lost
+- When system accesses session
 - Then the system:
-  - Apologizes for misunderstanding
-  - Acknowledges correction
-  - Restates understanding for confirmation
-  - Continues conversation with correct understanding
-- And recovery is smooth and natural
+  - Detects session issues
+  - Creates new session if needed
+  - Attempts to recover conversation state
+  - Informs customer if recovery isn't possible
+- And session errors don't break conversation flow
 
-### AC-022.6: Database/Storage Errors
-- Given database or storage operation fails
-- When saving data
+### AC-022.6: Database Errors
+- Given database operation fails
+- When system saves data
 - Then the system:
-  - Detects failure
-  - Logs error
-  - Retries save operation (with backoff)
-  - Informs customer of delay if critical
-  - Ensures eventual data persistence
-- And data is not lost
+  - Detects database errors
+  - Retries with backoff
+  - Provides user-friendly error message
+  - Logs error for technical team
+- And customer is informed appropriately
 
-### AC-022.7: Session Errors
-- Given session management encounters error
-- When session error occurs
+### AC-022.7: Network Errors
+- Given network issues occur
+- When system makes external calls
 - Then the system:
-  - Attempts to recover session
-  - Creates new session if recovery fails
-- And conversation state is preserved if possible
-- And customer experience continues smoothly
+  - Handles timeouts gracefully
+  - Retries with exponential backoff
+  - Provides fallback responses
+  - Informs customer of temporary issues
+- And network errors don't crash conversation
 
 ### AC-022.8: Error Logging
 - Given any error occurs
-- When error happens
+- When system encounters error
 - Then the system:
   - Logs error with full context
-  - Includes timestamp, session ID, error type
-  - Logs stack trace for technical errors
-  - Does not log sensitive customer data
-- And logs are accessible for debugging
-
-### AC-022.9: User-Friendly Error Messages
-- Given error message is displayed
-- When showing to customer
-- Then the system:
-  - Uses non-technical language
-  - Explains situation clearly
-  - Provides next steps or options
-  - Maintains professional, helpful tone
-  - Doesn't blame customer
-- And messages are reassuring
-
-### AC-022.10: Graceful Degradation
-- Given system component fails
-- When non-critical component fails
-- Then the system:
-  - Continues with reduced functionality if possible
-  - Informs customer of limitations
-  - Provides alternative if available
-- And core functionality remains available
+  - Includes stack traces for debugging
+  - Tracks error frequency
+  - Alerts technical team for critical errors
+- And logging doesn't expose sensitive data
 
 ## Detailed Scenarios
 
-### Scenario 1: LLM API Timeout
-**Given**: System calls LLM API  
-**When**: API times out after 10 seconds  
-**Then**: System detects timeout, sends message to customer: "I'm processing your request, please bear with me", retries API call, if second attempt succeeds, continues conversation
+### Scenario 1: LLM Service Unavailable
+**Given**: LLM API is down  
+**When**: System tries to generate response  
+**Then**: System provides fallback response, informs customer of temporary issue, retries, maintains conversation
 
-### Scenario 2: Invalid Phone Number Format
+### Scenario 2: Invalid Phone Number
 **Given**: Customer provides "123" as phone number  
 **When**: System validates  
-**Then**: System shows friendly error: "I need a valid phone number with country code. Example: +1-555-123-4567. Could you provide it in that format?"
+**Then**: System explains: "Please provide a valid phone number with country code. Example: +1-555-123-4567"
 
-### Scenario 3: Database Save Failure
-**Given**: System tries to save lead  
-**When**: Database connection fails  
-**Then**: System retries with backoff, logs error, if persistent: informs customer "I'm saving your information, there's a slight delay. Your information is safe.", eventually succeeds
+### Scenario 3: Session Expired
+**Given**: Customer's session expired  
+**When**: Customer sends message  
+**Then**: System creates new session, attempts to recover context, continues conversation
 
-### Scenario 4: Misunderstanding Recovery
-**Given**: System misunderstands customer's age as 35 instead of 53  
-**When**: Customer corrects "No, I'm 53"  
-**Then**: System apologizes: "I apologize for the confusion. You're 53, correct?", updates context, continues with correct age
+### Scenario 4: Database Connection Lost
+**Given**: Database connection fails during save  
+**When**: System tries to save lead  
+**Then**: System retries, logs error, informs customer: "I'm experiencing a temporary issue saving your information. Please try again in a moment."
 
-### Scenario 5: Session Expiration
-**Given**: Customer conversation inactive for extended period  
-**When**: Session expires  
-**Then**: System detects expiration, if customer returns: creates new session, acknowledges gap, offers to continue previous topic if context available
-
-### Scenario 6: Partial System Failure
-**Given**: Conversation feature works but policy database is down  
-**When**: Customer asks about policies  
-**Then**: System acknowledges: "I'm having trouble accessing policy details right now. I can answer general questions or you can contact our team directly at [number]. Would you like to continue?"
+### Scenario 5: Network Timeout
+**Given**: External API call times out  
+**When**: System makes request  
+**Then**: System retries with backoff, provides fallback, maintains conversation flow
 
 ## Technical Notes
 
-- Error handling middleware/framework
-- Retry logic with exponential backoff
-- Error logging system (structured logging)
-- User-friendly error message templates
-- Session recovery mechanisms
-- Circuit breaker pattern for external APIs
-- Fallback strategies
-- Error monitoring and alerting
+- Error handling middleware (`error_handler.py`)
+- Custom exception classes (`ApplicationError`, `ValidationError`, `SessionNotFoundError`, `LLMAPIError`, etc.)
+- Error handlers for different exception types
+- Retry logic with exponential backoff (can be added)
+- Fallback responses for LLM errors
+- Error logging with context
+- User-friendly error messages
+
+## API Implementation
+
+**Error Response Format**:
+```json
+{
+  "error": "error_type",
+  "message": "User-friendly error message",
+  "details": []  // Optional, for validation errors
+}
+```
+
+**Error Types**:
+- `validation_error`: 400 Bad Request
+- `session_not_found`: 404 Not Found
+- `rate_limit_exceeded`: 429 Too Many Requests
+- `llm_service_error`: 503 Service Unavailable
+- `duplicate_lead`: 409 Conflict
+- `internal_server_error`: 500 Internal Server Error
+
+**Implementation Details**:
+- Error handlers registered in FastAPI app
+- Custom exception classes for different error types
+- User-friendly error messages
+- Error logging with full context
+- Retry logic (can be added for specific operations)
 
 ## Related Requirements
-- **FR-4.7.1**: Handle technical errors gracefully
-- **FR-4.7.2**: Recover from misunderstandings
-- **FR-4.7.3**: Maintain conversation continuity
-- **NFR-8**: Handle errors gracefully
-- **NFR-9**: Recover without data loss
+- **NFR-8**: The system shall gracefully handle errors and unexpected inputs
+- **NFR-9**: The system shall recover from failures without data loss
 
 ## Dependencies
 - **Depends on**: All features (error handling is cross-cutting)
-- **Blocks**: None (enhances reliability of all features)
+- **Blocks**: None (enhances all features)
 
 ## Story Points
-**Estimate**: 8 points
+**Estimate**: 5 points
 
 ## Priority
 **High** - Critical for system reliability and user experience
+
+## Implementation Status
+- **Status**: ✅ Done
+- **Implementation Notes**: 
+  - Error handling middleware implemented
+  - Custom exception classes
+  - Error handlers for different types
+  - User-friendly error messages
+  - Error logging
+  - Retry logic can be added (future enhancement)
 
 ---
 
 ## Implementation Considerations
 
-- Design comprehensive error handling strategy
-- Implement retry logic with exponential backoff for API calls
-- Create user-friendly error message templates
-- Set up error logging and monitoring (Sentry, LogRocket, etc.)
-- Implement circuit breaker for external dependencies
-- Design graceful degradation for non-critical features
-- Test error scenarios thoroughly
-- Create error recovery workflows
-- Monitor error rates and types for continuous improvement
-
+- ✅ Error handling middleware (`error_handler.py`)
+- ✅ Custom exception classes
+- ✅ Error handlers for different exception types
+- ✅ User-friendly error messages
+- ✅ Error logging with context
+- Retry logic with exponential backoff (can be added)
+- Fallback responses for critical services

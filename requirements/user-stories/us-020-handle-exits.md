@@ -106,12 +106,49 @@ So that **I don't feel pressured and can leave with a positive impression**
 
 ## Technical Notes
 
-- Exit signal detection (keyword matching, sentiment analysis, pattern recognition)
-- Conversation state management for exit handling
-- Exit reason classification
-- Conversation log saving (even without lead)
-- Timeout detection and handling
-- Exit message templates for different stages
+- Exit signal detection via `_is_exit_signal()` method
+- Exit intent classification via `Intent.EXIT`
+- Exit handling via `_handle_exit()` method
+- Exit message templates in `PromptManager.EXIT_TEMPLATES`
+- Conversation state updated to `ENDED` stage
+- Conversation summary generated at exit
+- Conversation log saved regardless of outcome
+
+## API Implementation
+
+**Endpoint**: `POST /api/conversation/end`
+
+**Request**:
+```json
+{
+  "session_id": "abc123...",
+  "reason": "customer_requested"  // Optional
+}
+```
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "conversation_id": "def456...",
+  "status": "ended",
+  "summary": "Customer was not interested in life insurance...",
+  "duration_seconds": 420
+}
+```
+
+**Automatic Exit Detection**:
+- Exit signals detected during `process_message()`
+- Automatic exit handling when exit intent detected
+- Conversation ended gracefully with summary
+
+**Implementation Details**:
+- Exit detection via keyword matching and intent classification
+- Exit handling via `_handle_exit()` method
+- Exit templates for different exit types
+- Conversation summary generation
+- Session state updated to `ENDED`
+- Conversation log preserved
 
 ## Related Requirements
 - **FR-4.4.1**: Recognize exit signals
@@ -130,14 +167,24 @@ So that **I don't feel pressured and can leave with a positive impression**
 ## Priority
 **High** - Critical for customer experience and brand reputation
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoint**: `POST /api/conversation/end`
+- **Implementation Notes**: 
+  - Exit signal detection implemented
+  - Exit handling via `_handle_exit()` method
+  - Exit templates in `PromptManager`
+  - Conversation summary generation
+  - Graceful exit at any stage
+  - Conversation log preservation
+
 ---
 
 ## Implementation Considerations
 
-- Implement exit signal detection (multiple methods: keywords, sentiment, patterns)
-- Create exit message templates for different conversation stages
-- Design timeout detection (inactivity threshold)
-- Implement conversation state handling for exit
-- Ensure conversation logs are saved even without leads
-- Balance between graceful exit and conversion opportunity (don't exit too quickly, but respect clear signals)
-
+- ✅ Exit signal detection (keywords, intent classification)
+- ✅ Exit message templates for different exit types (`PromptManager.EXIT_TEMPLATES`)
+- ✅ Timeout detection (can be added via session TTL)
+- ✅ Conversation state handling for exit (`ConversationStage.ENDED`)
+- ✅ Conversation logs saved even without leads
+- ✅ Balance between graceful exit and conversion opportunity

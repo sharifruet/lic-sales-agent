@@ -78,11 +78,29 @@ So that **I can easily see differences and choose the best option for my needs**
 
 ## Technical Notes
 
-- Comparison engine/algorithm
-- Comparison template/formatter
-- Criteria standardization across policy types
-- Recommendation algorithm based on customer profile + policy features
-- Visual comparison support (if UI allows)
+- Comparison via LLM with policy context
+- Policy data retrieved via `PolicyService`
+- Comparison criteria included in LLM prompts
+- Recommendation via LLM with customer profile
+- Structured comparison format via LLM response
+
+## API Implementation
+
+**Current Implementation**:
+- Policies retrieved via `GET /api/policies/`
+- LLM can compare policies when customer asks in conversation
+- Comparison handled via conversation flow
+
+**Future Enhancement**:
+- Explicit comparison API endpoint
+- Structured comparison response format
+- Comparison templates
+
+**Implementation Details**:
+- Policy data available via `PolicyService`
+- LLM receives policy context for comparison
+- Customer profile included for personalized recommendations
+- Comparison handled naturally via conversation
 
 ## Related Requirements
 - **FR-2.4.1**: Side-by-side comparison (2-4 policies)
@@ -100,13 +118,53 @@ So that **I can easily see differences and choose the best option for my needs**
 ## Priority
 **Medium-High** - Helps customers make informed decisions
 
+## Implementation Status
+- **Status**: ✅ Mostly Implemented (Core functionality complete, structured format enhancement available)
+- **Current State**: 
+  - ✅ Policy data available via `PolicyService` and `GET /api/policies/`
+  - ✅ LLM can handle comparison requests in conversation flow
+  - ✅ Intent detection includes `POLICY_COMPARISON` intent
+  - ✅ System prompts guide policy comparisons
+  - ✅ Customer profile included in LLM context for personalized recommendations
+  - ✅ Multiple policies can be compared (up to 5 policies in context)
+  - ⚠️ Comparison is conversational (LLM-generated), not structured format
+  - ⚠️ No dedicated comparison API endpoint with structured response
+  - ⚠️ No comparison templates for consistent formatting
+
+- **Implementation Details**: 
+  - **Policy Retrieval**: `PolicyService.list_policies()` returns all policies, filtered by relevance
+  - **LLM Context**: Up to 5 policies included in `ContextManager.build_context()` for LLM
+  - **Intent Detection**: `LLMProvider.classify_intent()` detects `POLICY_COMPARISON` intent
+  - **System Prompts**: `PromptManager.INFORMATION_PROMPT` includes "Compare options when asked"
+  - **Customer Profile**: Customer profile (age, dependents, purpose) included in context for personalized recommendations
+  - **Policy Formatting**: `PromptManager._format_policies()` formats policies for LLM context
+  - **Conversation Flow**: Comparison handled naturally in `ConversationService.process_message()` when intent is detected
+
+- **Enhancement Opportunities**:
+  1. **Structured Comparison Format**: Add `PromptManager.get_comparison_template()` for consistent side-by-side comparisons
+  2. **Comparison API Endpoint**: Add `POST /api/policies/compare` with structured JSON response:
+     ```json
+     {
+       "policies": [...],
+       "comparison": {
+         "coverage": {...},
+         "premium": {...},
+         "features": {...},
+         "recommendation": "..."
+       }
+     }
+     ```
+  3. **Comparison Criteria**: Add explicit comparison criteria (coverage, premium, term, features) to prompts
+  4. **Visual Comparison**: Add markdown/table formatting for better readability
+  5. **Comparison History**: Track which policies were compared for analytics
+
 ---
 
 ## Implementation Considerations
 
-- Design comparison data structure
-- Create comparison rendering logic (table generation, structured text)
-- Define comparison criteria weights/scoring for recommendations
-- Handle edge cases: comparing different policy types, missing data
-- Consider UI component for visual comparison if web interface
-
+- ✅ **Core Functionality Complete**: LLM handles policy comparisons naturally in conversation
+- ✅ **Personalization**: Customer profile used for relevant recommendations
+- ✅ **Multiple Policies**: System can compare multiple policies (up to 5 in context)
+- ⚠️ **Structured Format**: Current comparison is conversational; structured format would improve clarity
+- ⚠️ **API Endpoint**: Dedicated comparison endpoint would enable programmatic access
+- ⚠️ **Consistency**: Comparison templates would ensure consistent comparison criteria across all comparisons

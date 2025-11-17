@@ -93,7 +93,7 @@ So that **I ensure data quality and prevent invalid or duplicate entries**
 ### Scenario 3: Duplicate Phone Number
 **Given**: Customer provides phone number that exists in database  
 **When**: System checks  
-**Then**: System detects duplicate, asks: "I found an existing record with this number. Are you a returning customer?"
+**Then**: System detects duplicate, raises `LeadValidationError` with message about existing lead
 
 ### Scenario 4: Invalid NID Format
 **Given**: Customer provides NID "ABC123" in country requiring 13 digits  
@@ -107,13 +107,58 @@ So that **I ensure data quality and prevent invalid or duplicate entries**
 
 ## Technical Notes
 
-- Validation rules/patterns for each field type
-- Country-specific validation (phone, NID, postal code formats)
-- Regular expressions for format validation
-- Checksum algorithms for NID (if applicable)
-- Duplicate checking query logic
-- Real-time validation integration with input handling
-- Validation error message templates
+- Validation via `ValidationService` with methods for each field type
+- Phone validation: format patterns, country code support, normalization
+- NID validation: format patterns, length checks
+- Email validation: RFC 5322 compliant
+- Name validation: length and character checks
+- Address validation: completeness checks
+- Duplicate checking via `LeadRepository.find_by_phone()`
+- Real-time validation during information collection
+
+## API Implementation
+
+**Endpoint**: `POST /api/leads/`
+
+**Request**:
+```json
+{
+  "name": "John Doe",
+  "phone": "+1234567890",
+  "nid": "123456789",
+  "address": "123 Main St, City, Country",
+  "interested_policy": "Term Life 20-Year",
+  "email": "john@example.com"
+}
+```
+
+**Response (Success)**:
+```json
+{
+  "id": 1,
+  "message": "Lead created successfully"
+}
+```
+
+**Response (Validation Error)**:
+```json
+{
+  "detail": {
+    "errors": [
+      "Invalid phone number format",
+      "NID must be 13 digits"
+    ]
+  }
+}
+```
+
+**Implementation Details**:
+- Validation via `ValidationService.validate_lead_data()`
+- Returns `ValidationResult` with errors list
+- `LeadService` raises `LeadValidationError` on validation failure
+- Duplicate checking before creation
+- Normalization of phone numbers
+- Clear error messages returned to API
 
 ## Related Requirements
 - **FR-8.1**: Phone number format validation
@@ -132,15 +177,23 @@ So that **I ensure data quality and prevent invalid or duplicate entries**
 ## Priority
 **High** - Essential for data quality
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoint**: `POST /api/leads/` (with validation)
+- **Implementation Notes**: 
+  - `ValidationService` fully implemented
+  - Phone, email, NID validation
+  - Duplicate detection
+  - Clear error messages
+  - Real-time validation during collection
+
 ---
 
 ## Implementation Considerations
 
-- Define validation schemas/rules for each field
-- Implement country-specific validation patterns
-- Create validation service/module
-- Design duplicate checking queries (index on phone, NID)
-- Design user-friendly error messages
-- Consider using validation libraries (e.g., python-phone-numbers, email-validator)
-- Performance: ensure duplicate checks don't slow down collection process
-
+- ✅ Validation schemas/rules for each field (`ValidationService`)
+- ✅ Country-specific validation patterns (extensible)
+- ✅ Validation service/module implemented
+- ✅ Duplicate checking queries (phone number)
+- ✅ User-friendly error messages
+- ✅ Performance: efficient duplicate checks

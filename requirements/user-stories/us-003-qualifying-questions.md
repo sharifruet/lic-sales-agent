@@ -92,12 +92,48 @@ So that **I can provide relevant policy recommendations and personalize the conv
 
 ## Technical Notes
 
-- NLP for information extraction (spacy, NER, or LLM-based extraction)
+- Information extraction via `InformationExtractionService` (LLM-based with regex fallback)
 - Age extraction patterns: numeric patterns, age-related keywords
-- Validation rules for each data type
-- Conversation state machine to track which questions have been answered
-- Context storage for collected information
-- Natural language understanding for flexible input formats
+- Validation via `ValidationService` for each data type
+- Conversation stage management (`QUALIFICATION` stage)
+- Context storage in `SessionState.customer_profile`
+- Natural language understanding via LLM for flexible input formats
+
+## API Implementation
+
+**Endpoint**: `POST /api/conversation/message`
+
+**Request**:
+```json
+{
+  "session_id": "abc123...",
+  "message": "I'm 35 years old and I have two children"
+}
+```
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "response": "Thank you for that information! To help me recommend the best policies...",
+  "interest_detected": "low",
+  "conversation_stage": "qualification",
+  "metadata": {
+    "message_count": 3,
+    "extracted_data": {
+      "age": 35,
+      "dependents": "two children"
+    }
+  }
+}
+```
+
+**Implementation Details**:
+- Entity extraction via `InformationExtractionService`
+- LLM-based extraction with regex fallback
+- Data stored in `SessionState.customer_profile`
+- Validation before storage
+- Stage progression based on profile completeness
 
 ## Related Requirements
 - **FR-1.3.1**: Conversational question style
@@ -119,14 +155,22 @@ So that **I can provide relevant policy recommendations and personalize the conv
 ## Priority
 **High** - Essential for personalization and relevant recommendations
 
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoint**: `POST /api/conversation/message` (qualification stage)
+- **Implementation Notes**: 
+  - Information extraction via LLM and regex
+  - Flexible format handling
+  - Validation before storage
+  - Stage-based question flow
+  - Context-aware responses
+
 ---
 
 ## Implementation Considerations
 
-- Use LLM for information extraction from natural language
-- Define clear validation schemas for each data type
-- Implement conversation state tracking
-- Create templates for common question explanations
-- Consider using structured extraction (function calling) if LLM supports it
-- Handle edge cases: ambiguous responses, multiple mentions of same data
-
+- ✅ LLM-based information extraction (`InformationExtractionService`)
+- ✅ Validation schemas for each data type (`ValidationService`)
+- ✅ Conversation state tracking (`SessionState`, `ConversationStage`)
+- ✅ Question explanations in system prompts (`PromptManager`)
+- ✅ Edge case handling (ambiguous responses, invalid data)

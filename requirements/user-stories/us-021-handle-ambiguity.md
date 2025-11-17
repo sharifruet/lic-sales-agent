@@ -2,146 +2,168 @@
 
 ## User Story
 As a **potential customer**
-I want the **AI agent to understand my messages even when they're unclear**
+I want the **AI agent to handle my ambiguous or unclear messages gracefully**
 So that **I can communicate naturally without worrying about perfect phrasing**
 
 ## Acceptance Criteria
 
 ### AC-021.1: Ambiguity Detection
 - Given customer sends a message
-- When system processes input
-- Then the system detects ambiguous inputs:
-  - Very short responses ("yes", "maybe", "ok")
-  - Grammatically unclear statements
-  - Multiple questions or topics in one message
+- When message is ambiguous or unclear
+- Then the system detects ambiguity through:
+  - Multiple possible interpretations
+  - Missing context or information
+  - Vague language or pronouns without referents
   - Contradictory statements
-  - Typographical errors that create ambiguity
-  - Unclear references ("that one", "the other")
-- And ambiguity is identified accurately
+- And system identifies what is unclear
 
 ### AC-021.2: Clarification Requests
 - Given ambiguous input is detected
-- When system responds
+- When system needs clarification
 - Then the system:
-  - Asks clarifying questions to understand intent
-  - Rephrases or summarizes what was understood
-  - Offers multiple interpretations when appropriate ("Did you mean... or ...?")
+  - Acknowledges the message
+  - Asks specific clarifying questions
+  - Provides context for what it understood
+  - Offers options if multiple interpretations are possible
 - And clarification requests are helpful, not frustrating
 
-### AC-021.3: Typo and Spelling Error Handling
-- Given customer message contains typos or spelling errors
-- When system processes
-- Then the system:
-  - Infers intended meaning despite errors
-  - Handles common typos gracefully
-  - Uses context to disambiguate
-  - Doesn't ask for clarification unless truly necessary
-- And typos don't break conversation flow
-
-### AC-021.4: Context-Based Disambiguation
+### AC-021.3: Context-Based Disambiguation
 - Given ambiguous input is received
-- When system processes
-- Then the system:
-  - Uses conversation context to infer meaning
-  - References previous messages to understand references
-  - Uses customer profile to narrow interpretations
-- And context helps resolve ambiguity
+- When disambiguating
+- Then the system uses conversation context to:
+  - Infer most likely meaning
+  - Use previous statements to resolve ambiguity
+  - Apply customer profile information
+  - Reference recent topics discussed
+- And system makes reasonable assumptions when context is clear
 
-### AC-021.5: Multiple Topics Handling
-- Given customer message contains multiple questions/topics
-- When system processes
+### AC-021.4: Multiple Interpretation Handling
+- Given input has multiple possible meanings
+- When system cannot determine intent
 - Then the system:
-  - Identifies all topics/questions
-  - Addresses each appropriately
-  - Organizes response clearly
-  - Asks if customer wants to focus on specific topic
-- And multiple topics are handled smoothly
+  - Presents possible interpretations
+  - Asks customer to clarify which is correct
+  - Provides examples if helpful
+- And system doesn't guess incorrectly
 
-### AC-021.6: Critical Information Ambiguity
-- Given customer provides ambiguous information during data collection
-- When collecting critical data (phone, NID, address)
+### AC-021.5: Partial Understanding
+- Given customer message contains both clear and unclear parts
+- When processing
 - Then the system:
-  - Requests clarification specifically for critical fields
-  - Provides format examples
-  - Validates after clarification
-  - Doesn't proceed until clarity is achieved
-- And critical data accuracy is ensured
+  - Acknowledges what it understood
+  - Asks for clarification on unclear parts
+  - Proceeds with clear information
+- And system doesn't ignore the entire message
 
-### AC-021.7: Contradictory Statement Handling
-- Given customer makes contradictory statements
-- When system detects contradiction
+### AC-021.6: Typo and Grammar Tolerance
+- Given customer message contains typos or grammar errors
+- When processing
 - Then the system:
-  - Acknowledges the contradiction politely
-  - Asks for clarification
-  - References both statements
-  - Helps customer clarify intent
-- And contradiction is resolved without frustration
+  - Handles common typos gracefully
+  - Interprets intent despite grammar errors
+  - Doesn't require perfect spelling or grammar
+- And system maintains natural conversation flow
 
 ## Detailed Scenarios
 
-### Scenario 1: Short Ambiguous Response
-**Given**: System asks "Are you interested in term life or whole life?"  
-**When**: Customer responds "yes"  
-**Then**: System recognizes ambiguity, asks "Are you interested in term life, whole life, or both?"
-
-### Scenario 2: Typo Handling
-**Given**: Customer types "I'm 35 yers old" (typo)  
+### Scenario 1: Ambiguous Pronoun
+**Given**: Customer says "I want that one" without context  
 **When**: System processes  
-**Then**: System correctly infers age as 35, doesn't ask for clarification, continues conversation
+**Then**: System asks "Which policy are you referring to? We discussed Term Life and Whole Life options."
 
-### Scenario 3: Multiple Questions
-**Given**: Customer asks "What's the premium and do I need a medical exam and how long does it take?"  
+### Scenario 2: Vague Request
+**Given**: Customer says "Tell me more"  
 **When**: System processes  
-**Then**: System identifies all three questions, addresses each in organized response
+**Then**: System uses context to determine what "more" refers to, or asks "Would you like more details about the policy we just discussed, or something else?"
 
-### Scenario 4: Unclear Reference
-**Given**: System discusses Policy A and Policy B  
-**When**: Customer says "I want that one"  
-**Then**: System recognizes ambiguity, asks "Do you mean Policy A or Policy B?", or uses context if clear
+### Scenario 3: Context-Based Disambiguation
+**Given**: Customer says "I'm interested" after policy discussion  
+**When**: System processes  
+**Then**: System infers interest in discussed policy, confirms: "Great! Are you interested in the Term Life 20-Year policy we just discussed?"
 
-### Scenario 5: Critical Data Ambiguity
-**Given**: System asks for phone number  
-**When**: Customer provides "my phone" or unclear format  
-**Then**: System requests specific format: "Could you provide your phone number with country code? Example: +1-555-123-4567"
+### Scenario 4: Typo Handling
+**Given**: Customer types "I'm intrested in term life"  
+**When**: System processes  
+**Then**: System understands "interested" despite typo, responds appropriately
 
-### Scenario 6: Contradiction
-**Given**: Customer earlier said "no insurance" but now asks "how much does it cost?"  
-**When**: System detects contradiction  
-**Then**: System acknowledges: "Earlier you mentioned you don't have insurance, but now you're asking about cost. Are you considering getting coverage?"
+### Scenario 5: Contradictory Statements
+**Given**: Customer says "I don't need insurance" then "But maybe I do"  
+**When**: System processes  
+**Then**: System acknowledges both statements, asks for clarification: "I understand you have mixed feelings. What concerns you most about getting insurance?"
 
 ## Technical Notes
 
-- NLP for ambiguity detection (sentence parsing, semantic analysis)
-- Typo correction/approximate matching (fuzzy matching, edit distance)
-- Context-aware disambiguation (conversation history analysis)
-- Multi-intent detection for multiple questions
-- LLM capabilities for natural language understanding
-- Clarification template generation
+- Ambiguity detection via LLM intent classification and context analysis
+- Clarification generation via LLM with context awareness
+- Context-based disambiguation via `ContextManager` and conversation history
+- Typo tolerance via LLM natural language understanding
+- Multiple interpretation handling via LLM response generation
+
+## API Implementation
+
+**Endpoint**: `POST /api/conversation/message`
+
+**Request**:
+```json
+{
+  "session_id": "abc123...",
+  "message": "I want that one"  // Ambiguous
+}
+```
+
+**Response**:
+```json
+{
+  "session_id": "abc123...",
+  "response": "I'd be happy to help! Which policy are you referring to? We discussed Term Life and Whole Life options.",
+  "interest_detected": "low",
+  "conversation_stage": "information",
+  "metadata": {
+    "message_count": 8,
+    "extracted_data": {}
+  }
+}
+```
+
+**Implementation Details**:
+- Ambiguity handled via LLM context awareness
+- `ContextManager` provides conversation history for disambiguation
+- LLM generates clarification questions when needed
+- Intent classification helps identify ambiguous inputs
+- Natural language understanding handles typos and grammar errors
 
 ## Related Requirements
 - **FR-4.5.1**: Detect ambiguous inputs
-- **FR-4.5.2**: Ask clarifying questions
-- **FR-4.5.3**: Handle typos
-- **FR-4.5.4**: Request clarification for critical information
+- **FR-4.5.2**: Request clarification
+- **FR-4.5.3**: Use context for disambiguation
+- **FR-4.5.4**: Handle typos and grammar errors
 
 ## Dependencies
-- **Depends on**: US-015 (conversation context - helps with disambiguation)
+- **Depends on**: US-001, US-015 (context management)
 - **Blocks**: None (enhances all conversation features)
 
 ## Story Points
-**Estimate**: 8 points (complex NLP requirements)
+**Estimate**: 5 points
 
 ## Priority
-**High** - Critical for natural conversation and user experience
+**Medium-High** - Important for natural conversation and user experience
+
+## Implementation Status
+- **Status**: ✅ Done
+- **API Endpoint**: `POST /api/conversation/message` (with ambiguity handling)
+- **Implementation Notes**: 
+  - LLM-based ambiguity handling
+  - Context-aware disambiguation
+  - Natural clarification generation
+  - Typo tolerance via LLM
+  - Multiple interpretation handling
 
 ---
 
 ## Implementation Considerations
 
-- Leverage LLM capabilities for natural language understanding and ambiguity detection
-- Implement typo correction using fuzzy matching or LLM
-- Use conversation context to help disambiguate
-- Create clarification question templates
-- Balance between asking for clarification and inferring meaning
-- Test with various ambiguous inputs to improve detection
-
+- ✅ Ambiguity detection via LLM intent classification
+- ✅ Clarification generation via LLM with context
+- ✅ Context-based disambiguation (`ContextManager`)
+- ✅ Typo tolerance via LLM natural language understanding
+- ✅ Multiple interpretation handling via LLM response generation

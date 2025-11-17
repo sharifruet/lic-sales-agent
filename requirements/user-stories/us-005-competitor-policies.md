@@ -68,11 +68,30 @@ So that **I can make an informed decision by understanding all available options
 
 ## Technical Notes
 
-- Competitor policy database schema
-- Comparison algorithm/logic
-- Update mechanism for competitor data
+- Competitor policies can be stored in same `Policy` model with different `provider` field
+- Comparison via LLM with policy context
+- Update mechanism for competitor data (same as company policies)
 - Disclaimer handling for information accuracy
 - Integration with company policy database for side-by-side comparison
+
+## API Implementation
+
+**Current Implementation**:
+- Policies stored with `provider` field (can be company or competitor)
+- `GET /api/policies/` returns all policies
+- LLM can compare policies when customer asks
+- Policy comparison can be handled via conversation flow
+
+**Future Enhancement**:
+- Explicit competitor policy management
+- Comparison API endpoint
+- Competitor-specific endpoints
+
+**Implementation Details**:
+- Policy model supports competitor policies via `provider` field
+- LLM can handle competitor questions with policy context
+- Fair comparison via system prompts
+- Competitor information can be added to policy database
 
 ## Related Requirements
 - **FR-2.2.1**: Accurate competitor information
@@ -92,14 +111,41 @@ So that **I can make an informed decision by understanding all available options
 ## Priority
 **Medium** - Important for competitive sales but secondary to company policy presentation
 
+## Implementation Status
+- **Status**: ✅ Mostly Implemented (Core functionality complete, enhancements available)
+- **Current State**: 
+  - ✅ Policy model supports competitor policies via `provider` field
+  - ✅ LLM can handle competitor questions with policy context
+  - ✅ Intent detection includes `POLICY_COMPARISON` intent
+  - ✅ Objection handling includes "comparison" objection type with template
+  - ✅ Response filter checks for competitor bashing
+  - ✅ System prompts guide fair competitor discussions
+  - ⚠️ No explicit competitor policy filtering in API (all policies returned)
+  - ⚠️ No dedicated competitor comparison endpoint
+  - ⚠️ No competitor-specific policy management UI/API
+
+- **Implementation Details**: 
+  - **Policy Model**: `Policy` model has `provider` field that can store company name or competitor name
+  - **Intent Detection**: `LLMProvider.classify_intent()` can detect `POLICY_COMPARISON` intent
+  - **Objection Handling**: `ConversationService._handle_objection()` handles "comparison" objections using `PromptManager.get_objection_response("comparison", context)`
+  - **Response Filtering**: `ResponseFilter` checks for competitor bashing keywords
+  - **LLM Context**: Competitor policies are included in LLM context when available
+  - **System Prompts**: `PromptManager.INFORMATION_PROMPT` includes guidance to "Compare options when asked"
+
+- **Enhancement Opportunities**:
+  1. **Competitor Policy Filtering**: Add `GET /api/policies/?provider=<name>` to filter by provider
+  2. **Competitor Comparison Endpoint**: Add `POST /api/policies/compare` with structured comparison response
+  3. **Competitor Management**: Add admin endpoints to manage competitor policies separately
+  4. **Comparison Templates**: Add structured comparison templates in `PromptManager` for side-by-side comparisons
+  5. **Competitor Data Validation**: Add validation to ensure competitor information is accurate and up-to-date
+
 ---
 
 ## Implementation Considerations
 
-- Design competitor policy database similar to company policy database
-- Define comparison framework and criteria
-- Create comparison templates
-- Implement fair comparison logic that highlights strengths without making false claims
-- Consider data source for competitor information (manual entry, web scraping with disclaimers, partnerships)
-- Legal/compliance review may be needed for competitive statements
-
+- ✅ **Core Functionality Complete**: Competitor policies work through existing policy system
+- ✅ **Fair Comparison**: System prompts and response filters ensure fair, factual comparisons
+- ✅ **LLM Integration**: LLM handles competitor questions naturally in conversation flow
+- ⚠️ **Enhancement Needed**: Explicit competitor filtering and comparison APIs would improve UX
+- ⚠️ **Legal/Compliance**: Consider adding disclaimers for competitor information accuracy
+- ⚠️ **Data Management**: Consider separate competitor policy management for easier updates
