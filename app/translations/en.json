@@ -1,0 +1,17 @@
+{
+  "greeting": "Hello! I'm an AI life insurance agent. How can I help you today?",
+  "intro": "I'm here to help you understand life insurance options and find the right coverage for you.",
+  "ask_name": "What's your name?",
+  "ask_age": "How old are you?",
+  "ask_phone": "What's your phone number?",
+  "ask_nid": "What's your National ID number?",
+  "ask_address": "What's your address?",
+  "thank_you": "Thank you for your information!",
+  "policy_info": "Here are some policies that might interest you:",
+  "interested": "That sounds great! I'd be happy to help you with that.",
+  "not_interested": "I understand. Feel free to reach out if you have questions in the future.",
+  "goodbye": "Thank you for your time. Have a great day!",
+  "error": "I'm sorry, I didn't understand that. Could you please repeat?",
+  "processing": "Let me check that for you..."
+}
+

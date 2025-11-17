@@ -1,14 +1,23 @@
 """Main FastAPI application entry point."""
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from src.config import settings
 from src.api.router import api_router
+from src.middleware.error_handler import (
+    validation_exception_handler,
+    http_exception_handler,
+    application_error_handler,
+    generic_exception_handler,
+    ApplicationError,
+)
 
 # Create FastAPI app
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="AI-powered conversational life insurance sales agent",
+    description="AI-powered conversational life insurance sales agent (Text & Voice)",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -21,6 +30,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Error handlers
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(ApplicationError, application_error_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 # Include API routers
 app.include_router(api_router)

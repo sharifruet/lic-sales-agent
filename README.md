@@ -31,9 +31,12 @@ The AI Life Insurance Sales Agent is a text-based conversational AI system that:
 
 - 🤖 **AI-Powered Conversations**: Uses LLM (Ollama/OpenAI) for natural language understanding
 - 💬 **Persuasive Sales Techniques**: Implements human-like sales conversation strategies
+- 🎤 **Voice Support (Phase 2)**: Real-time voice conversations with STT/TTS
+- 🌍 **Multi-Language Support**: Internationalization ready
 - 📊 **Lead Management**: Collects and manages customer information
 - 🔒 **Secure Data Storage**: Encrypts sensitive information (NID, phone numbers)
 - 📝 **Conversation Logging**: Tracks all conversations for analysis
+- 📈 **Analytics Dashboard**: Conversation metrics and lead analytics
 - 👥 **Admin Dashboard**: View leads, conversations, and manage policies
 
 ### Current Phase
@@ -43,10 +46,12 @@ The AI Life Insurance Sales Agent is a text-based conversational AI system that:
 - Basic lead collection
 - Admin interface for lead management
 
-**Phase 2: Voice-Based Application** 🔜 (Planned)  
-- Voice-to-text conversion
-- Text-to-speech synthesis
-- Real-time voice conversations
+**Phase 2: Voice-Based Application** ✅  
+- Voice-to-text conversion (STT)
+- Text-to-speech synthesis (TTS)
+- Real-time voice conversations (WebSocket)
+- Multi-language support (i18n)
+- Conversation analytics and metrics
 
 ---
 
@@ -280,6 +285,14 @@ REDIS_URL=redis://localhost:6379
 # Security (Generate keys - see setup guide)
 ENCRYPTION_KEY=your-key-here
 JWT_SECRET_KEY=your-key-here
+
+# Voice Configuration (Phase 2)
+VOICE_ENABLED=true
+STT_PROVIDER=openai
+TTS_PROVIDER=openai
+TTS_VOICE=alloy
+DEFAULT_LANGUAGE=en
+OPENAI_API_KEY=your-openai-key-here  # Required for voice features
 ```
 
 See [`docs/development-environment-setup.md`](./docs/development-environment-setup.md) for complete configuration.

@@ -44,6 +44,13 @@ class Settings(BaseSettings):
     llm_max_tokens: int = 500
     llm_timeout: int = 30
     
+    # Voice/Audio Configuration
+    voice_enabled: bool = True
+    stt_provider: str = "openai"  # openai, ollama
+    tts_provider: str = "openai"  # openai, elevenlabs, google
+    tts_voice: str = "alloy"  # Default voice for TTS
+    default_language: str = "en"  # Default language code
+    
     # Security
     encryption_key: str
     jwt_secret_key: str

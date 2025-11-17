@@ -20,14 +20,20 @@ python-dotenv>=1.0.0
 # LLM Providers
 ollama>=0.1.0
 # Optional cloud providers (uncomment if needed):
-# openai>=1.3.0
+openai>=1.3.0
 # anthropic>=0.7.0
+
+# Voice/Audio Processing
+websockets>=12.0
+python-multipart>=0.0.6
 
 # Database Migrations
 alembic>=1.12.1
 
 # Security
 cryptography>=41.0.7
+python-jose[cryptography]>=3.3.0
+httpx>=0.25.0
 
 # Testing
 pytest>=7.4.3
