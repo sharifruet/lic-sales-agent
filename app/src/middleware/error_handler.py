@@ -105,11 +105,19 @@ async def application_error_handler(request: Request, exc: ApplicationError):
         )
     
     if isinstance(exc, LLMAPIError):
+        # Use fallback service for user-friendly message
+        try:
+            from src.services.fallback_service import FallbackService
+            fallback_service = FallbackService()
+            user_message = fallback_service.get_llm_error_message(retry_after=5)
+        except Exception:
+            user_message = "I'm having a technical issue. Please try again in a moment."
+        
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={
                 "error": "llm_service_error",
-                "message": "I'm having a technical issue. Please try again in a moment.",
+                "message": user_message,
                 "retry_after": 5
             }
         )

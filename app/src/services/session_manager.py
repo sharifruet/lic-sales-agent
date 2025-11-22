@@ -75,6 +75,8 @@ class SessionState:
     interest_level: InterestLevel = InterestLevel.NONE
     message_count: int = 0
     context_summary: str = ""
+    awaiting_confirmation: bool = False  # Track if waiting for confirmation
+    confirmation_attempts: int = 0  # Track number of confirmation attempts
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_activity: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -130,6 +132,8 @@ class SessionManager:
             "interest_level": state.interest_level.value,
             "message_count": state.message_count,
             "context_summary": state.context_summary,
+            "awaiting_confirmation": state.awaiting_confirmation,
+            "confirmation_attempts": state.confirmation_attempts,
             "created_at": dt_to_str(state.created_at),
             "last_activity": dt_to_str(state.last_activity),
         }
@@ -147,6 +151,8 @@ class SessionManager:
             interest_level=InterestLevel(data.get("interest_level", InterestLevel.NONE)),
             message_count=int(data.get("message_count", 0)),
             context_summary=data.get("context_summary", ""),
+            awaiting_confirmation=data.get("awaiting_confirmation", False),
+            confirmation_attempts=int(data.get("confirmation_attempts", 0)),
             created_at=parse_dt(data["created_at"]),
             last_activity=parse_dt(data["last_activity"]),
         )

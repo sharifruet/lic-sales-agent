@@ -33,6 +33,27 @@ class AuthService:
         except JWTError:
             return None
     
+    def get_token_payload(self, token: str) -> Optional[dict]:
+        """Get token payload without verification (for expiration check)."""
+        try:
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+            return payload
+        except JWTError:
+            return None
+    
+    def get_token_expiration(self, token: str) -> Optional[datetime]:
+        """Get token expiration time."""
+        payload = self.get_token_payload(token)
+        if payload is None:
+            return None
+        
+        exp = payload.get("exp")
+        if exp is None:
+            return None
+        
+        # Convert Unix timestamp to datetime
+        return datetime.utcfromtimestamp(exp)
+    
     def authenticate_user(self, username: str, password: str) -> bool:
         """Authenticate user credentials (simple version - extend for production)."""
         # Simple hardcoded admin for Phase 1

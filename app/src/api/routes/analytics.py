@@ -30,6 +30,8 @@ async def get_conversation_analytics(
         "avg_conversation_duration_seconds": metrics.avg_conversation_duration,
         "avg_messages_per_conversation": metrics.avg_messages_per_conversation,
         "conversations_by_stage": metrics.conversations_by_stage,
+        "avg_time_in_stage_seconds": metrics.avg_time_in_stage,  # AC-026.3: Average time in each stage
+        "stage_progression_patterns": metrics.stage_progression_patterns,  # AC-026.3: Stage progression patterns
         "conversion_rate_percent": metrics.conversion_rate
     }
 
@@ -80,9 +82,14 @@ async def get_conversation_quality(
     
     score = await service.get_conversation_quality_score(conversation_id)
     
+    # Get detailed quality breakdown (AC-026.4: Quality score breakdown)
+    service = AnalyticsService(db)
+    quality_breakdown = await service.get_conversation_quality_breakdown(conversation_id)
+    
     return {
         "conversation_id": conversation_id,
         "quality_score": score,
-        "rating": "excellent" if score >= 80 else "good" if score >= 60 else "fair" if score >= 40 else "poor"
+        "rating": "excellent" if score >= 80 else "good" if score >= 60 else "fair" if score >= 40 else "poor",
+        "breakdown": quality_breakdown  # AC-026.4: Quality score breakdown
     }
 

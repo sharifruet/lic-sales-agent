@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     debug: bool = False
     environment: str = "development"
+    company_name: str = "Life Insurance Company"  # Company name for identifying company vs competitor policies
     
     # Database
     database_url: str
@@ -68,6 +69,7 @@ class Settings(BaseSettings):
     # Rate Limiting
     rate_limit_per_minute: int = 60
     rate_limit_per_hour: int = 1000
+    enable_rate_limiting: bool = True  # Enable/disable rate limiting middleware
     
     class Config:
         env_file = str(ENV_FILE)  # Use absolute path to .env in project root
