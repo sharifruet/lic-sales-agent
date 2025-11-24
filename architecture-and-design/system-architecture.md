@@ -189,6 +189,14 @@ The AI Life Insurance Sales Agent is a conversational AI application that:
 - **Response Filter**: Safety and content filtering
 - **Intent Detection**: Customer intent classification
 
+#### 4.2.4 Agent Orchestration (LangGraph)
+- **LangGraph Conversation Graph**: State machine built from nodes in `graph/nodes`
+- **Runnable Pipelines**: LangChain-powered planner/retriever/action chains in `chains/`
+- **State & Memory**: Typed conversation state and memory policies under `state/`
+- **Tooling Integrations**: MCP clients and tool specifications under `tools/`
+- **Observability**: LangSmith tracing and evaluation harness in `observability/`
+- **API Integration**: FastAPI entrypoint in `apps/api` composes the graph; the legacy `app/src` stack has been deprecated
+
 #### 4.2.4 Data Access Layer
 - **Repositories**: Data access abstraction (Leads, Conversations, Policies)
 
@@ -421,7 +429,8 @@ Backend:
 
 AI/LLM:
 ├── OpenAI Python SDK / Anthropic SDK
-├── LangChain (optional, for advanced features)
+├── LangGraph (agent orchestration)
+├── LangChain (runnables, retrievers)
 └── Prompt engineering framework
 
 Database:

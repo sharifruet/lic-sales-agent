@@ -44,9 +44,41 @@ This document provides detailed technical specifications for implementing the AI
 
 ## Component Detailed Designs
 
-### 2.1 Conversation Service
+### 2.1 Conversation Orchestration (LangGraph)
 
-#### 2.1.1 Class Structure
+The legacy `ConversationService` has been replaced with a LangGraph-powered pipeline. The new orchestration lives in the following modules:
+
+- `graph/build_graph.py` – assembles the conversation graph and exposes `run_turn`.
+- `graph/nodes/planner.py` – determines the next action using planner prompts.
+- `graph/nodes/retriever.py` – retrieves supporting knowledge via the RAG layer.
+- `graph/nodes/action.py` – generates assistant replies or triggers tools.
+- `graph/nodes/decider.py` – routes execution to the appropriate node.
+- `graph/nodes/reflector.py` – optional reflection/summarisation step.
+- `chains/prompts/*`, `chains/runnables.py`, `chains/parsers.py` – LangChain-based prompts, runnables, and structured parsers for planner/retriever/action.
+- `rag/ingest.py`, `rag/retriever.py` – in-memory ingestion and retriever used by the graph.
+- `tools/mcp_client.py`, `tools/policy_tools.py` – MCP-style tool registry used by the action node.
+- `state/schemas.py`, `state/memory.py` – typed conversation state and memory policies shared across nodes.
+
+The FastAPI layer (`apps/api/router.py`) now accepts user messages, stores them in an in-memory conversation store, and executes a single graph turn:
+
+```python
+state.messages.append(Message(role="user", content=content, message_type=MessageType.USER))
+state.current_objective = payload.get("objective") or state.current_objective
+updated_state = conversation_graph.run_turn(state)
+```
+
+`run_turn` performs:
+
+1. Planner node → updates `ConversationState.plan_steps`, `next_action`.
+2. Decider node → chooses retriever/action/end.
+3. Retriever node (if required) → populates `retrieved_context`.
+4. Action node → generates assistant message or invokes a tool.
+5. Optional reflection → appends system summary.
+6. Memory policies → trim short-term history and persist long-term notes.
+
+This replaces the manual stage-based workflow outlined in earlier drafts. The remainder of this section documents the legacy design for reference.
+
+#### 2.1.1 Legacy Class Structure (Reference)
 
 ```python
 class ConversationService:
@@ -88,7 +120,7 @@ class ConversationService:
         """Detect buying interest signals"""
 ```
 
-#### 2.1.2 Process Message Algorithm
+#### 2.1.2 Legacy Process Message Algorithm (Deprecated)
 
 ```python
 async def process_message(session_id: str, user_message: str):

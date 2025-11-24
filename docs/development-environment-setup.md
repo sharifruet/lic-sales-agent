@@ -60,6 +60,10 @@ Before starting, ensure you have the following installed:
    - Anthropic: https://console.anthropic.com/
    - **Note**: For local development, Ollama doesn't require API keys
 
+8. **LangGraph Tooling (Optional - Preview)**
+   - Install with: `pip install langgraph langchain`
+   - Used by the new agent orchestration layer found under `apps/`, `graph/`, and `chains/`
+
 ### Recommended Tools
 
 - **IDE/Editor**: VS Code, PyCharm, or your preferred Python IDE
@@ -99,7 +103,7 @@ cp .env.docker.example .env
 alembic upgrade head
 
 # 8. Run application
-uvicorn src.main:app --reload --port 8000
+uvicorn apps.api.main:app --reload --port 8000
 ```
 
 **Benefits:**
@@ -141,7 +145,7 @@ ollama serve  # Or use Docker: docker run -d -p 11434:11434 ollama/ollama
 ollama pull llama3.1
 
 # 10. Run application
-uvicorn src.main:app --reload --port 8000
+uvicorn apps.api.main:app --reload --port 8000
 ```
 
 ---
@@ -643,7 +647,9 @@ Or manually insert via database client.
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # Run with auto-reload (recommended for development)
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+make run
+# Or manually
+uvicorn apps.api.main:app --reload --host 0.0.0.0 --port 8000
 
 # Or use FastAPI CLI
 fastapi dev src/main.py
@@ -663,17 +669,38 @@ docker-compose up -d
 ### Running Tests
 
 ```bash
-# Run all tests
-pytest
+# Run all checks via Makefile
+make format lint type-check test
 
-# Run with coverage
+# Windows helper (PowerShell)
+pwsh ./scripts/run_checks.ps1
+
+# Run individual steps
+make lint
+make type-check
+make test
 pytest --cov=src --cov-report=html
-
 # Run specific test file
-pytest tests/test_conversation_service.py
+pytest tests/test_health.py
 
 # Run with verbose output
 pytest -v
+```
+
+### LangGraph Preview Commands
+
+The LangGraph-based agent scaffolding lives under `apps/`, `graph/`, and related packages.
+While the graph is still under construction, you can run placeholder checks:
+
+```bash
+pytest tests/test_graph.py
+python scripts/bootstrap.sh  # placeholder scaffold
+```
+
+Install optional dependencies if you plan to experiment early:
+
+```bash
+pip install langgraph langchain
 ```
 
 ---
@@ -691,9 +718,7 @@ Expected response:
 {
   "status": "healthy",
   "version": "1.0.0",
-  "database": "ok",
-  "redis": "ok",
-  "llm_provider": "ok"
+  "environment": "development"
 }
 ```
 
@@ -948,7 +973,7 @@ lsof -i :8000  # macOS/Linux
 netstat -ano | findstr :8000  # Windows
 
 # Kill the process or use different port
-uvicorn src.main:app --reload --port 8001
+uvicorn apps.api.main:app --reload --port 8001
 ```
 
 ### Issue: Migration errors
@@ -1037,7 +1062,7 @@ pip install -e .
       "request": "launch",
       "module": "uvicorn",
       "args": [
-        "src.main:app",
+        "apps.api.main:app",
         "--reload",
         "--host",
         "0.0.0.0",
@@ -1077,7 +1102,7 @@ pip install -e .
    - Run → Edit Configurations
    - Add New → Python
    - Script path: Select `src/main.py` or use module: `uvicorn`
-   - Parameters: `src.main:app --reload`
+   - Parameters: `apps.api.main:app --reload`
    - Working directory: Project root
    - Environment variables: Load from `.env` file
 
