@@ -118,6 +118,21 @@ and state management layers are scaffolded under `apps/`, `graph/`, and `chains/
 - API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
 
+### Run Full Stack (API + Frontend UI)
+
+The FastAPI app serves the chat UI from `app/static`, so starting the backend also brings up the frontend:
+
+```bash
+# Ensure infrastructure is running
+docker-compose up -d
+
+# In a new terminal (with virtualenv activated)
+make run                     # or: uvicorn apps.api.main:app --reload --port 8000
+```
+
+Then open http://localhost:8000/ in your browser for the web chat UI (see `app/static/README.md` for features).  
+If you later migrate to the standalone React app under `apps/web`, start it with your preferred frontend tooling (e.g., `npm run dev`) after installing its dependencies.
+
 ### Manual Setup
 
 See [Development Environment Setup Guide](./docs/development-environment-setup.md) for detailed manual setup instructions.
