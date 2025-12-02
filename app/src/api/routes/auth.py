@@ -4,7 +4,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-from src.services.auth_service import AuthService
+from app.src.services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

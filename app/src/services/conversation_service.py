@@ -9,27 +9,27 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
-from src.llm.providers.llm_provider import LLMProvider, LLMConfig, Message, Intent
-from src.llm.context_manager import ContextManager
-from src.llm.prompt_manager import PromptManager
-from src.llm.response_filter import ResponseFilter
-from src.llm.stage_configs import get_stage_config
-from src.models.message import Message as MessageModel
-from src.models.conversation import Conversation
-from src.services.session_manager import (
+from app.src.llm.providers.llm_provider import LLMProvider, LLMConfig, Message, Intent
+from app.src.llm.context_manager import ContextManager
+from app.src.llm.prompt_manager import PromptManager
+from app.src.llm.response_filter import ResponseFilter
+from app.src.llm.stage_configs import get_stage_config
+from app.src.models.message import Message as MessageModel
+from app.src.models.conversation import Conversation
+from app.src.services.session_manager import (
     ConversationStage,
     InterestLevel,
     SessionManager,
     SessionState,
 )
-from src.services.policy_service import PolicyService
-from src.services.validation_service import ValidationService
-from src.services.lead_service import LeadService
-from src.services.information_extraction_service import InformationExtractionService
-from src.services.ambiguity_detection_service import AmbiguityDetectionService
-from src.services.retry_service import RetryService, RetryConfig
-from src.services.fallback_service import FallbackService
-from src.middleware.error_handler import SessionNotFoundError, LLMAPIError
+from app.src.services.policy_service import PolicyService
+from app.src.services.validation_service import ValidationService
+from app.src.services.lead_service import LeadService
+from app.src.services.information_extraction_service import InformationExtractionService
+from app.src.services.ambiguity_detection_service import AmbiguityDetectionService
+from app.src.services.retry_service import RetryService, RetryConfig
+from app.src.services.fallback_service import FallbackService
+from app.src.middleware.error_handler import SessionNotFoundError, LLMAPIError
 
 
 @dataclass

@@ -22,7 +22,7 @@ class OpenAITTSProvider(TTSProvider):
         self.model = model
         self.default_voice = voice
         if not self.api_key:
-            from src.config import settings
+            from app.src.config import settings
             self.api_key = settings.openai_api_key
     
     async def synthesize(self, text: str, language: Optional[str] = None, voice: Optional[str] = None) -> bytes:
@@ -117,7 +117,7 @@ class TTSService:
     """Service for Text-to-Speech operations."""
     
     def __init__(self, provider: Optional[TTSProvider] = None):
-        from src.config import settings
+        from app.src.config import settings
         self.provider = provider or self._create_default_provider(settings)
     
     def _create_default_provider(self, settings) -> TTSProvider:

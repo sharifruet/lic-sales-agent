@@ -3,7 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.models.export_history import ExportHistory
+from app.src.models.export_history import ExportHistory
 
 
 class ExportHistoryRepository:

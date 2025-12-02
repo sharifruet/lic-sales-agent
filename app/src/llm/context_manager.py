@@ -1,7 +1,7 @@
 """Context Manager for building LLM context."""
 from typing import List, Dict, Optional
-from src.llm.providers.llm_provider import Message
-from src.services.session_manager import SessionState
+from app.src.llm.providers.llm_provider import Message
+from app.src.services.session_manager import SessionState
 
 
 class LLMContext:

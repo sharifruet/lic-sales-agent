@@ -1,12 +1,12 @@
 """Main API router configuration."""
 from fastapi import APIRouter
 
-from src.api.routes.leads import router as leads_router
-from src.api.routes.conversation import router as conversation_router
-from src.api.routes.policies import router as policies_router
-from src.api.routes.auth import router as auth_router
-from src.api.routes.voice import router as voice_router
-from src.api.routes.analytics import router as analytics_router
+from app.src.api.routes.leads import router as leads_router
+from app.src.api.routes.conversation import router as conversation_router
+from app.src.api.routes.policies import router as policies_router
+from app.src.api.routes.auth import router as auth_router
+from app.src.api.routes.voice import router as voice_router
+from app.src.api.routes.analytics import router as analytics_router
 
 # Create main router
 api_router = APIRouter(prefix="/api", tags=["api"])

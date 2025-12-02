@@ -1,7 +1,7 @@
 """Prompt Manager for system prompts and templates following LLM Integration Design."""
 from typing import Dict, List, Optional
 from datetime import datetime
-from src.services.session_manager import ConversationStage
+from app.src.services.session_manager import ConversationStage
 
 
 class PromptManager:

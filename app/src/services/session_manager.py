@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 import json
 from redis import asyncio as redis_async
 
-from src.config import settings
+from app.src.config import settings
 
 
 class ConversationStage(str, Enum):

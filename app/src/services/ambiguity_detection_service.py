@@ -1,7 +1,7 @@
 """Ambiguity Detection Service for handling unclear or ambiguous user inputs."""
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
-from src.llm.providers.llm_provider import LLMProvider, Message, LLMConfig
+from app.src.llm.providers.llm_provider import LLMProvider, Message, LLMConfig
 import re
 
 
@@ -137,7 +137,7 @@ class AmbiguityDetectionService:
         if self.llm_provider and (has_pronouns or has_vague or len(message.strip()) < 10):
             try:
                 # Ask LLM to analyze ambiguity
-                from src.llm.providers.llm_provider import LLMConfig
+                from app.src.llm.providers.llm_provider import LLMConfig
                 analysis_prompt = f"""Analyze this message for ambiguity in the context of a life insurance sales conversation:
 
 Message: "{message}"

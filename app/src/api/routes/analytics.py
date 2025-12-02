@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_db
-from src.services.analytics_service import AnalyticsService
-from src.middleware.auth import get_current_user
+from config.database import get_db
+from app.src.services.analytics_service import AnalyticsService
+from app.src.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 

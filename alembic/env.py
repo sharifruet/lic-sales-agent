@@ -17,16 +17,16 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.config import settings
-from src.database import Base
+from app.src.config import settings
+from config.database import Base
 # Import models so that Base.metadata is populated for autogenerate
 # Import all models including ExportHistory
-from src.models import lead as _lead_model  # noqa: F401
-from src.models import conversation as _conversation_model  # noqa: F401
-from src.models import message as _message_model  # noqa: F401
-from src.models import policy as _policy_model  # noqa: F401
-from src.models import lead_status_history as _lead_status_history_model  # noqa: F401
-from src.models import export_history as _export_history_model  # noqa: F401
+from app.src.models import lead as _lead_model  # noqa: F401
+from app.src.models import conversation as _conversation_model  # noqa: F401
+from app.src.models import message as _message_model  # noqa: F401
+from app.src.models import policy as _policy_model  # noqa: F401
+from app.src.models import lead_status_history as _lead_status_history_model  # noqa: F401
+from app.src.models import export_history as _export_history_model  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

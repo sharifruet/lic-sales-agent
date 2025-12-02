@@ -1,6 +1,6 @@
 """Stage-specific LLM configurations following LLM Integration Design."""
-from src.llm.providers.llm_provider import LLMConfig
-from src.services.session_manager import ConversationStage
+from app.src.llm.providers.llm_provider import LLMConfig
+from app.src.services.session_manager import ConversationStage
 
 
 # Stage-specific LLM configurations from LLM Integration Design Document

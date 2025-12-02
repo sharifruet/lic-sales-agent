@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import String, DateTime, Integer, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
+from config.database import Base
 
 
 class LeadStatusHistory(Base):

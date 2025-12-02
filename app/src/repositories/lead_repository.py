@@ -1,8 +1,8 @@
 from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.models.lead import Lead
-from src.models.lead_status_history import LeadStatusHistory
+from app.src.models.lead import Lead
+from app.src.models.lead_status_history import LeadStatusHistory
 
 
 class LeadRepository:
@@ -101,7 +101,7 @@ class LeadRepository:
 
     async def update(self, lead_id: int, updates: dict) -> Optional[Lead]:
         """Update lead with partial updates."""
-        from src.models.lead import LeadStatus
+        from app.src.models.lead import LeadStatus
         
         lead = await self.find_by_id(lead_id)
         if not lead:
@@ -174,7 +174,7 @@ class LeadRepository:
         Returns:
             List of successfully updated lead IDs
         """
-        from src.models.lead import LeadStatus
+        from app.src.models.lead import LeadStatus
         
         if not lead_ids:
             return []

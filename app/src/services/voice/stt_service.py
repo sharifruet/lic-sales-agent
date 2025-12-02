@@ -27,7 +27,7 @@ class OpenAISTTProvider(STTProvider):
         self.api_key = api_key
         self.model = model
         if not self.api_key:
-            from src.config import settings
+            from app.src.config import settings
             self.api_key = settings.openai_api_key
     
     async def transcribe(self, audio_data: bytes, language: Optional[str] = None) -> str:
@@ -99,7 +99,7 @@ class STTService:
     """Service for Speech-to-Text operations."""
     
     def __init__(self, provider: Optional[STTProvider] = None):
-        from src.config import settings
+        from app.src.config import settings
         self.provider = provider or self._create_default_provider(settings)
     
     def _create_default_provider(self, settings) -> STTProvider:
