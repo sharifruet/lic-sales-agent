@@ -6,11 +6,11 @@ import json
 import asyncio
 import base64
 
-from src.services.voice import STTService, TTSService
-from src.services.conversation_service import ConversationService
-from src.services.session_manager import SessionManager
-from src.database import get_db
-from src.config import settings
+from app.src.services.voice import STTService, TTSService
+from app.src.services.conversation_service import ConversationService
+from app.src.services.session_manager import SessionManager
+from config.database import get_db
+from app.src.config import settings
 
 router = APIRouter(prefix="/voice", tags=["voice"])
 
@@ -42,7 +42,7 @@ async def transcribe_audio(
         
         # If session_id provided, process as conversation message
         if session_id:
-            from src.database import AsyncSessionLocal
+            from config.database import AsyncSessionLocal
             db = AsyncSessionLocal()
             try:
                 conversation_service = ConversationService(db)
@@ -112,7 +112,7 @@ async def voice_conversation_websocket(websocket: WebSocket, session_id: str):
     await websocket.accept()
     
     # Initialize conversation service with database session
-    from src.database import AsyncSessionLocal
+    from config.database import AsyncSessionLocal
     
     db = AsyncSessionLocal()
     conversation_service = ConversationService(db)

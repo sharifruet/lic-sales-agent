@@ -1,8 +1,8 @@
 from typing import List, Optional
 
-from src.models.policy import Policy
-from src.repositories.policy_repository import PolicyRepository
-from src.config import settings
+from app.src.models.policy import Policy
+from app.src.repositories.policy_repository import PolicyRepository
+from app.src.config import settings
 
 
 class PolicyService:

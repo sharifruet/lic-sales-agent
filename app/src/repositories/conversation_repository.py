@@ -4,8 +4,8 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.conversation import Conversation
-from src.models.message import Message
+from app.src.models.conversation import Conversation
+from app.src.models.message import Message
 
 
 class ConversationRepository:

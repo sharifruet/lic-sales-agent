@@ -3,10 +3,10 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import List, Optional
-from src.config import settings
-from src.models.lead import Lead
-from src.models.conversation import Conversation
-from src.models.message import Message
+from app.src.config import settings
+from app.src.models.lead import Lead
+from app.src.models.conversation import Conversation
+from app.src.models.message import Message
 
 
 class FileStorageService:
@@ -111,7 +111,7 @@ class FileStorageService:
         """
         import csv
         from io import StringIO
-        from src.services.encryption_service import EncryptionService
+        from app.src.services.encryption_service import EncryptionService
         
         output = StringIO()
         writer = csv.writer(output)
@@ -171,7 +171,7 @@ class FileStorageService:
             leads: List of leads to export
             decrypt: If True, decrypt phone/NID for admin (requires EncryptionService)
         """
-        from src.services.encryption_service import EncryptionService
+        from app.src.services.encryption_service import EncryptionService
         
         encryption_service = EncryptionService() if decrypt else None
         
@@ -222,7 +222,7 @@ class FileStorageService:
         summary: Optional[str] = None
     ) -> str:
         """Export conversation to plain text format."""
-        from src.services.session_manager import SessionState
+        from app.src.services.session_manager import SessionState
         
         lines = []
         

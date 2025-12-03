@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-from src.config import settings
+from app.src.config import settings
 
 
 class AuthService:

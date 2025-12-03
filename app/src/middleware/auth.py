@@ -1,7 +1,7 @@
 """Authentication middleware for protected endpoints."""
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from src.services.auth_service import AuthService
+from app.src.services.auth_service import AuthService
 
 security = HTTPBearer()
 auth_service = AuthService()

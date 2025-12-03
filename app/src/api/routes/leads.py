@@ -4,11 +4,11 @@ from typing import List, Optional
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_db
-from src.repositories.lead_repository import LeadRepository
-from src.services.lead_service import LeadService, LeadValidationError
-from src.middleware.auth import get_current_user
-from src.models.lead import LeadStatus
+from config.database import get_db
+from app.src.repositories.lead_repository import LeadRepository
+from app.src.services.lead_service import LeadService, LeadValidationError
+from app.src.middleware.auth import get_current_user
+from app.src.models.lead import LeadStatus
 
 router = APIRouter(prefix="/leads", tags=["leads"])
 
@@ -286,8 +286,8 @@ async def export_leads(
     )
     
     # Log export history
-    from src.repositories.export_history_repository import ExportHistoryRepository
-    from src.models.export_history import ExportHistory
+    from app.src.repositories.export_history_repository import ExportHistoryRepository
+    from app.src.models.export_history import ExportHistory
     import json as json_lib
     
     export_repo = ExportHistoryRepository(db)
@@ -376,7 +376,7 @@ async def get_export_history(
         GET /api/leads/export/history?export_type=leads
         GET /api/leads/export/history?exported_by=admin&page=1&page_size=25
     """
-    from src.repositories.export_history_repository import ExportHistoryRepository
+    from app.src.repositories.export_history_repository import ExportHistoryRepository
     from datetime import datetime
     import json as json_lib
     

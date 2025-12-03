@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.conversation import Conversation
-from src.models.message import Message
-from src.models.lead import Lead
+from app.src.models.conversation import Conversation
+from app.src.models.message import Message
+from app.src.models.lead import Lead
 
 
 class ConversationMetrics:

@@ -1,9 +1,9 @@
 from typing import List, Optional
-from src.models.lead import Lead, LeadStatus
-from src.repositories.lead_repository import LeadRepository
-from src.services.validation_service import ValidationService
-from src.services.encryption_service import EncryptionService
-from src.services.file_storage_service import FileStorageService
+from app.src.models.lead import Lead, LeadStatus
+from app.src.repositories.lead_repository import LeadRepository
+from app.src.services.validation_service import ValidationService
+from app.src.services.encryption_service import EncryptionService
+from app.src.services.file_storage_service import FileStorageService
 
 
 class LeadValidationError(Exception):

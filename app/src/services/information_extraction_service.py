@@ -1,6 +1,6 @@
 """Information Extraction service for extracting structured data from messages."""
 from typing import Dict, List, Any, Optional
-from src.llm.providers.llm_provider import LLMProvider
+from app.src.llm.providers.llm_provider import LLMProvider
 import re
 
 

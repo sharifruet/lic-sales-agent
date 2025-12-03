@@ -10,17 +10,17 @@ from sqlalchemy import select
 from redis import asyncio as redis_async
 import httpx
 import os
-from src.config import settings
-from src.api.router import api_router
-from src.database import engine
-from src.middleware.error_handler import (
+from app.src.config import settings
+from app.src.api.router import api_router
+from config.database import engine
+from app.src.middleware.error_handler import (
     validation_exception_handler,
     http_exception_handler,
     application_error_handler,
     generic_exception_handler,
     ApplicationError,
 )
-from src.middleware.rate_limiter import RateLimitMiddleware
+from app.src.middleware.rate_limiter import RateLimitMiddleware
 
 # Create FastAPI app
 app = FastAPI(

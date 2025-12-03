@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import String, Integer, Numeric, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
+from config.database import Base
 
 
 class Policy(Base):

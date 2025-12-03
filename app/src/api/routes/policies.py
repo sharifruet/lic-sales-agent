@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_db
-from src.repositories.policy_repository import PolicyRepository
-from src.services.policy_service import PolicyService
-from src.middleware.auth import get_current_user
+from config.database import get_db
+from app.src.repositories.policy_repository import PolicyRepository
+from app.src.services.policy_service import PolicyService
+from app.src.middleware.auth import get_current_user
 
 
 router = APIRouter(prefix="/policies", tags=["policies"])

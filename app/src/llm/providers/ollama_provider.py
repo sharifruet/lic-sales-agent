@@ -3,14 +3,14 @@ from typing import List, Dict, Any, Optional
 import json
 import httpx
 
-from src.llm.providers.llm_provider import (
+from app.src.llm.providers.llm_provider import (
     LLMProvider,
     LLMConfig,
     LLMResponse,
     Message,
     Intent,
 )
-from src.config import settings
+from app.src.config import settings
 
 
 class OllamaProvider(LLMProvider):
@@ -38,7 +38,7 @@ class OllamaProvider(LLMProvider):
         prompt = self._format_messages_for_ollama(messages)
         
         # Retry network call with exponential backoff (AC-022.7: Network retry with backoff)
-        from src.services.retry_service import RetryService, RetryConfig
+        from app.src.services.retry_service import RetryService, RetryConfig
         retry_service = RetryService(RetryConfig(max_attempts=3, initial_delay=1.0, max_delay=10.0))
         
         async def _call_ollama_api():
@@ -76,7 +76,7 @@ class OllamaProvider(LLMProvider):
             )
         except Exception as e:
             # Raise as LLMAPIError for proper error handling
-            from src.middleware.error_handler import LLMAPIError
+            from app.src.middleware.error_handler import LLMAPIError
             raise LLMAPIError(f"Ollama API error after retries: {str(e)}")
     
     def _format_messages_for_ollama(self, messages: List[Message]) -> str:
@@ -105,7 +105,7 @@ Possible intents: greeting, question, objection, interest, exit, information_req
 Respond with only the intent name."""
         
         # Retry network call with exponential backoff (AC-022.7)
-        from src.services.retry_service import RetryService, RetryConfig
+        from app.src.services.retry_service import RetryService, RetryConfig
         retry_service = RetryService(RetryConfig(max_attempts=3, initial_delay=1.0, max_delay=10.0))
         
         async def _classify_intent_api():

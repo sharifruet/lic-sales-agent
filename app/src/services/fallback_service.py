@@ -1,6 +1,6 @@
 """Fallback response service for when critical services fail."""
 from typing import Dict, Optional, Any
-from src.services.session_manager import ConversationStage, InterestLevel
+from app.src.services.session_manager import ConversationStage, InterestLevel
 
 
 class FallbackService:

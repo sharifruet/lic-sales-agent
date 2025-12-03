@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any
 from sqlalchemy import String, DateTime, Integer, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
+from config.database import Base
 
 
 class Message(Base):

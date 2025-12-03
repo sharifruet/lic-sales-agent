@@ -4,7 +4,7 @@ from enum import Enum
 from sqlalchemy import String, DateTime, Boolean, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
+from config.database import Base
 
 
 class LeadStatus(str, Enum):

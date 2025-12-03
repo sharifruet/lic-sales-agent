@@ -4,8 +4,8 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 from typing import Callable
-from src.services.rate_limiter_service import RateLimiterService
-from src.config import settings
+from app.src.services.rate_limiter_service import RateLimiterService
+from app.src.config import settings
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):

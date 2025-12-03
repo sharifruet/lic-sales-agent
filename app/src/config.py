@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     # LLM Settings
     llm_temperature: float = 0.7
     llm_max_tokens: int = 500
-    llm_timeout: int = 30
+    llm_timeout: int = 180
     
     # Voice/Audio Configuration
     voice_enabled: bool = True

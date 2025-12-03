@@ -1,7 +1,7 @@
 """Rate limiting service using Redis."""
 from typing import Dict, Tuple, Optional
 from redis import asyncio as redis_async
-from src.config import settings
+from app.src.config import settings
 
 
 class RateLimiterService:

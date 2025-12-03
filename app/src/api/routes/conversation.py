@@ -7,17 +7,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_db
-from src.models.conversation import Conversation
-from src.services.conversation_service import ConversationService
-from src.services.policy_service import PolicyService
-from src.services.validation_service import ValidationService
-from src.services.lead_service import LeadService
-from src.repositories.policy_repository import PolicyRepository
-from src.repositories.lead_repository import LeadRepository
-from src.llm.providers.ollama_provider import OllamaProvider
-from src.middleware.error_handler import SessionNotFoundError
-from src.middleware.auth import get_current_user
+from config.database import get_db
+from app.src.models.conversation import Conversation
+from app.src.services.conversation_service import ConversationService
+from app.src.services.policy_service import PolicyService
+from app.src.services.validation_service import ValidationService
+from app.src.services.lead_service import LeadService
+from app.src.repositories.policy_repository import PolicyRepository
+from app.src.repositories.lead_repository import LeadRepository
+from app.src.llm.providers.ollama_provider import OllamaProvider
+from app.src.middleware.error_handler import SessionNotFoundError
+from app.src.middleware.auth import get_current_user
 
 
 router = APIRouter(prefix="/conversation", tags=["conversation"])
@@ -166,8 +166,8 @@ async def get_conversation_history(
     Note: Public access allowed for UI - users can view their own conversation history.
     """
     from sqlalchemy import select, or_
-    from src.models.message import Message as MessageModel
-    from src.services.session_manager import SessionManager
+    from app.src.models.message import Message as MessageModel
+    from app.src.services.session_manager import SessionManager
     
     # Get conversation
     res = await db.execute(
@@ -243,10 +243,10 @@ async def export_conversation_transcript(
         - pdf: PDF format (requires reportlab library)
     """
     from sqlalchemy import select
-    from src.models.message import Message as MessageModel
-    from src.services.session_manager import SessionManager
-    from src.services.conversation_service import ConversationService
-    from src.services.file_storage_service import FileStorageService
+    from app.src.models.message import Message as MessageModel
+    from app.src.services.session_manager import SessionManager
+    from app.src.services.conversation_service import ConversationService
+    from app.src.services.file_storage_service import FileStorageService
     from fastapi.responses import Response
     
     if format not in ["txt", "csv", "pdf"]:
@@ -283,8 +283,8 @@ async def export_conversation_transcript(
         summary = "Conversation completed."
     
     # Log export history before exporting
-    from src.repositories.export_history_repository import ExportHistoryRepository
-    from src.models.export_history import ExportHistory
+    from app.src.repositories.export_history_repository import ExportHistoryRepository
+    from app.src.models.export_history import ExportHistory
     
     export_repo = ExportHistoryRepository(db)
     export_history = ExportHistory(

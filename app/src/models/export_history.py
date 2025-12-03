@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import String, DateTime, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
+from config.database import Base
 
 
 class ExportHistory(Base):

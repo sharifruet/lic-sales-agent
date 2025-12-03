@@ -1,6 +1,6 @@
 """Encryption service for sensitive data."""
 from cryptography.fernet import Fernet
-from src.config import settings
+from app.src.config import settings
 
 
 class EncryptionService:
