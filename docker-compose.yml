@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:13-alpine
+    container_name: lic-agent-postgres
+    environment:
+      POSTGRES_USER: lic_agent
+      POSTGRES_PASSWORD: lic_agent_password
+      POSTGRES_DB: lic_agent_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lic_agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lic-agent-network
+
+  # Redis for Session Storage
+  redis:
+    image: redis:7-alpine
+    container_name: lic-agent-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - lic-agent-network
+
+  # Ollama for Local LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: lic-agent-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Uncomment to use GPU (if available)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - lic-agent-network
+
+  # Application Backend (optional - for running entire stack)
+  # Uncomment when ready to run app in Docker
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: lic-agent-backend
+  #   environment:
+  #     DATABASE_URL: postgresql+asyncpg://lic_agent:lic_agent_password@postgres:5432/lic_agent_dev
+  #     REDIS_URL: redis://redis:6379
+  #     OLLAMA_BASE_URL: http://ollama:11434
+  #     LLM_PROVIDER: ollama
+  #     OLLAMA_MODEL: llama3.1
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     ollama:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./data:/app/data
+  #   networks:
+  #     - lic-agent-network
+  #   command: uvicorn apps.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  lic-agent-network:
+    driver: bridge
+

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Life Insurance Sales Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        .message.assistant .message-time {
+            text-align: left;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .start-section {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .start-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .start-section p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            margin-top: 4px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-section {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .admin-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .admin-item-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .admin-item-detail {
+            color: #666;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Life Insurance Sales Agent</h1>
+            <div class="header-info">
+                <div class="status-badge" id="stageBadge">Not Started</div>
+                <div class="status-badge" id="interestBadge">No Interest</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-section">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="start-section" id="startSection">
+                        <h2>Welcome to AI Life Insurance Sales Agent</h2>
+                        <p>Start a conversation to get personalized insurance recommendations</p>
+                        <button class="btn btn-primary" onclick="startConversation()">Start Conversation</button>
+                    </div>
+                </div>
+
+                <div class="chat-input-area" id="inputArea" style="display: none;">
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            class="chat-input" 
+                            id="messageInput" 
+                            placeholder="Type your message..."
+                            onkeypress="handleKeyPress(event)"
+                        >
+                        <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('info')">Info</div>
+                    <div class="tab" onclick="switchTab('admin')">Admin</div>
+                </div>
+
+                <div class="tab-content active" id="infoTab">
+                    <div class="sidebar-section">
+                        <h3>Conversation Info</h3>
+                        <div class="info-item">
+                            <div class="info-label">Session ID</div>
+                            <div class="info-value" id="sessionId">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Conversation ID</div>
+                            <div class="info-value" id="conversationId">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Stage</div>
+                            <div class="info-value" id="stageInfo">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Interest Level</div>
+                            <div class="info-value" id="interestInfo">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Messages</div>
+                            <div class="info-value" id="messageCount">0</div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Actions</h3>
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="endConversation()">End Conversation</button>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="viewHistory()">View Full History</button>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="adminTab">
+                    <div class="sidebar-section">
+                        <h3>Quick Stats</h3>
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="loadAnalytics()">Load Analytics</button>
+                        <div id="analyticsContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentSessionId = null;
+        let currentConversationId = null;
+
+        async function startConversation() {
+            try {
+                const btn = event.target;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading"></span> Starting...';
+
+                const response = await fetch(`${API_BASE}/api/conversation/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ source: 'web' })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentSessionId = data.session_id;
+                currentConversationId = data.conversation_id;
+
+                // Hide start section and show chat
+                document.getElementById('startSection').style.display = 'none';
+                document.getElementById('inputArea').style.display = 'block';
+
+                // Add welcome message
+                addMessage('assistant', data.welcome_message);
+                updateInfo('sessionId', currentSessionId);
+                updateInfo('conversationId', currentConversationId);
+                updateInfo('stageInfo', 'Introduction');
+                updateBadge('stageBadge', 'Introduction');
+
+                // Focus input
+                document.getElementById('messageInput').focus();
+            } catch (error) {
+                console.error('Error starting conversation:', error);
+                alert('Failed to start conversation: ' + error.message);
+                event.target.disabled = false;
+                event.target.innerHTML = 'Start Conversation';
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || !currentSessionId) return;
+
+            // Add user message to chat
+            addMessage('user', message);
+            input.value = '';
+
+            // Disable send button and show loading
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="loading"></span> Sending...';
+            
+            // Add a loading message indicator
+            const loadingId = 'loading-' + Date.now();
+            const messagesDiv = document.getElementById('chatMessages');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = loadingId;
+            loadingDiv.className = 'message assistant';
+            loadingDiv.innerHTML = `
+                <div class="message-content" style="opacity: 0.7; font-style: italic;">
+                    <span class="loading"></span> AI is thinking...
+                </div>
+            `;
+            messagesDiv.appendChild(loadingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                // Create AbortController for timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+                
+                const response = await fetch(`${API_BASE}/api/conversation/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        message: message
+                    }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Remove loading indicator
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.remove();
+                }
+                
+                // Add assistant response
+                addMessage('assistant', data.response);
+
+                // Update UI
+                updateBadge('stageBadge', data.conversation_stage);
+                updateBadge('interestBadge', data.interest_detected);
+                updateInfo('stageInfo', data.conversation_stage);
+                updateInfo('interestInfo', data.interest_detected);
+                updateMessageCount();
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                
+                // Remove loading indicator
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.remove();
+                }
+                
+                let errorMsg = 'Sorry, I encountered an error. Please try again.';
+                
+                if (error.name === 'AbortError') {
+                    errorMsg = 'Request timed out (60s). The AI is taking too long to respond. This might be because:\n- Ollama is processing a large model\n- The server is under heavy load\n- Network issues\n\nPlease try again in a moment.';
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                addMessage('assistant', `Error: ${errorMsg}`, true);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = 'Send';
+                input.focus();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addMessage(role, content, isError = false) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            if (isError) {
+                messageDiv.innerHTML = `
+                    <div class="message-content" style="background: #fee; color: #c33;">
+                        ${content}
+                    </div>
+                `;
+            } else {
+                const time = new Date().toLocaleTimeString();
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        ${escapeHtml(content)}
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            updateMessageCount();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateInfo(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value || '-';
+            }
+        }
+
+        function updateBadge(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value || '-';
+            }
+        }
+
+        function updateMessageCount() {
+            const messages = document.querySelectorAll('.message');
+            updateInfo('messageCount', messages.length);
+        }
+
+        async function endConversation() {
+            if (!currentSessionId) return;
+
+            if (!confirm('Are you sure you want to end this conversation?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/conversation/end`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        reason: 'User ended conversation'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('assistant', `Conversation ended. Summary: ${data.summary}`);
+                    alert('Conversation ended successfully!');
+                }
+            } catch (error) {
+                console.error('Error ending conversation:', error);
+                alert('Failed to end conversation: ' + error.message);
+            }
+        }
+
+        async function viewHistory() {
+            if (!currentSessionId) {
+                alert('No active conversation');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/conversation/${currentSessionId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.messages && data.messages.length > 0) {
+                        const historyText = data.messages.map(m => 
+                            `${m.role}: ${m.content}`
+                        ).join('\n\n');
+                        alert('Conversation History:\n\n' + historyText);
+                    } else {
+                        alert('No messages in conversation history yet.');
+                    }
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to load history');
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                alert('Failed to load history: ' + error.message);
+            }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${API_BASE}/api/analytics/conversations?days=7`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const content = document.getElementById('analyticsContent');
+                    content.innerHTML = `
+                        <div class="admin-item">
+                            <div class="admin-item-header">Total Conversations</div>
+                            <div class="admin-item-detail">${data.total_conversations}</div>
+                        </div>
+                        <div class="admin-item">
+                            <div class="admin-item-header">Total Messages</div>
+                            <div class="admin-item-detail">${data.total_messages}</div>
+                        </div>
+                        <div class="admin-item">
+                            <div class="admin-item-header">Avg Duration</div>
+                            <div class="admin-item-detail">${Math.round(data.avg_conversation_duration_seconds)}s</div>
+                        </div>
+                        <div class="admin-item">
+                            <div class="admin-item-header">Conversion Rate</div>
+                            <div class="admin-item-detail">${data.conversion_rate_percent.toFixed(1)}%</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('analyticsContent').innerHTML = 
+                    '<div class="error-message">Failed to load analytics</div>';
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+    </script>
+</body>
+</html>
+
